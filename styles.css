@@ -1,49 +1,71 @@
-/* Styles approximating the provided design */
+/* Blue design styles for Misli PWA prototype */
 :root{
-  --blue-1:#2A7FFF;
-  --blue-2:#66A3FF;
-  --bg:#eef1f5;
+  --primary:#1565C0; /* deep blue */
+  --accent:#42A5F5; /* lighter */
+  --bg:#f4f9ff;
   --card:#ffffff;
-  --muted:#7b8595;
+  --text:#0f1720;
+  --muted:#6b7280;
+  --radius:12px;
 }
 *{box-sizing:border-box}
-body{font-family: 'Segoe UI', Roboto, Arial, sans-serif;background:var(--bg);margin:0;color:#1b2740}
-.app-shell{max-width:420px;margin:28px auto;border-radius:12px;overflow:hidden;box-shadow:0 30px 60px rgba(20,30,50,0.08);background:linear-gradient(180deg,#f6f8fb,#edf0f4)}
-.header{background:linear-gradient(90deg,var(--blue-1),var(--blue-2));color:#fff;padding:18px 16px;position:relative}
-.header-inner{display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:10px}
-.logo .cloud{font-size:26px}
-.logo .title{font-weight:700;font-size:20px}
-.icon-btn{background:transparent;border:none;font-size:20px;color:#fff;cursor:pointer}
-.wave{height:36px;background:linear-gradient(180deg,rgba(255,255,255,0.05),transparent);border-bottom-left-radius:12px;border-bottom-right-radius:12px}
-.container{padding:14px;background:transparent}
-.controls{background:transparent;padding-bottom:8px}
-.radius-select{display:flex;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:8px 10px;box-shadow:0 2px 6px rgba(16,24,45,0.05);border:1px solid rgba(0,0,0,0.04);margin-bottom:8px}
-.radius-select .pin{font-size:16px}
-.radius-select select{margin-left:auto;border:none;background:transparent;font-weight:600;color:#2b3b5a}
-.radius-tabs{display:flex;gap:8px;overflow:auto;padding:8px 0 0}
-.radius-tabs button{background:transparent;border:none;padding:6px 8px;border-radius:6px;color:#2b3b5a;cursor:pointer}
-.radius-tabs button.active{border-bottom:3px solid var(--blue-1);color:var(--blue-1);font-weight:700}
-.thought-list{margin-top:12px}
-.thought-card{background:var(--card);border-radius:8px;padding:14px;margin-bottom:12px;box-shadow:0 6px 16px rgba(30,40,70,0.06)}
-.thought-card .meta{margin-top:8px;color:var(--muted);font-size:13px;display:flex;gap:10px;align-items:center}
-.bottom-action{padding:12px 0 20px;background:linear-gradient(180deg,transparent,#eef2f6);display:flex;justify-content:center}
-.primary-btn{background:linear-gradient(180deg,var(--blue-1),var(--blue-2));color:#fff;border:none;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700}
-.primary-btn.large{width:88%;font-size:18px;padding:14px}
-.secondary-btn{background:#fff;border:1px solid #d8dfea;padding:10px 16px;border-radius:8px;cursor:pointer}
-.screen{display:none}
-.screen.active{display:block}
-/* Write view styles */
-.write-header{display:flex;align-items:center;gap:12px;padding:12px 0}
-.back-btn{background:transparent;border:none;font-size:20px;cursor:pointer}
-.write-title{font-weight:700;font-size:18px}
-.write-area{padding:10px 0}
-.write-area textarea{width:100%;height:280px;padding:14px;border-radius:8px;border:1px solid #e6ebf2;background:#fff;resize:none;font-size:15px}
-.row{display:flex;align-items:center}
-.row.between{justify-content:space-between}
-.muted{color:var(--muted)}
-.write-actions{display:flex;gap:12px;padding:18px 0;justify-content:space-between}
-.footer-bar{height:18px;background:transparent}
-
-/* small screens */
-@media (max-width:460px){.app-shell{margin:10px;border-radius:8px}}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg, var(--bg), #eaf4ff);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+.app-root{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+}
+.app-header{
+  text-align:center;
+  margin-bottom:1.25rem;
+}
+.logo{
+  width:64px;
+  height:64px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(21,101,192,0.16);
+  display:block;
+  margin:0 auto 0.5rem;
+}
+h1{margin:0;font-size:1.5rem;color:var(--primary)}
+.tagline{margin:0;color:var(--muted);font-size:0.95rem}
+.card{
+  width:100%;
+  max-width:720px;
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:1.4rem;
+  box-shadow:0 12px 30px rgba(13,42,69,0.08);
+  border:1px solid rgba(21,101,192,0.04);
+}
+.controls{display:flex;gap:0.6rem;margin-top:1rem}
+.btn{
+  padding:0.6rem 1rem;
+  border-radius:10px;
+  border:1px solid rgba(10,25,50,0.06);
+  background:transparent;
+  cursor:pointer;
+  font-weight:600;
+}
+.btn.primary{
+  background:linear-gradient(180deg,var(--primary),var(--accent));
+  color:white;
+  box-shadow:0 8px 20px rgba(21,101,192,0.18);
+  border:0;
+}
+.btn:active{transform:translateY(1px)}
+.status{margin-top:1rem;color:var(--muted)}
+.app-footer{margin-top:1rem;color:var(--muted);font-size:0.85rem;text-align:center}
+@media(min-width:800px){
+  .app-root{padding:3rem}
+}

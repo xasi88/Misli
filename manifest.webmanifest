@@ -1,18 +1,19 @@
 {
-  "name": "Мысли вокруг",
-  "short_name": "Мысли",
-  "start_url": "/",
+  "name": "Misli — Prototype",
+  "short_name": "Misli",
+  "description": "PWA prototype with a blue design — replace contents to fit your app.",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#f4f4f9",
-  "theme_color": "#2A7FFF",
+  "background_color": "#eaf4ff",
+  "theme_color": "#1565C0",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -1,67 +1,48 @@
-const CACHE_NAME = 'mysli-vokrug-cache-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/manifest.webmanifest',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+const CACHE_NAME = 'misli-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './manifest.webmanifest',
+  './firebase-config.example.js',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
-// Установка — кэшируем основные ресурсы
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache).catch(() => {
-        // если какие-то ресурсы отсутствуют — не падаем
-        return Promise.resolve();
-      });
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
   );
 });
 
-// Очистка старых кэшей
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
-      keys.map(key => {
-        if (key !== CACHE_NAME) return caches.delete(key);
-      })
-    )).then(() => self.clients.claim())
+      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+    ))
   );
 });
 
-// Фетч — кеш-первая стратегия для статичных ресурсов, для навигации возвращаем index.html (SPA fallback)
-self.addEventListener('fetch', event => {
-  const request = event.request;
-
-  // Обработка навигации (страницы)
-  if (request.mode === 'navigate' || (request.method === 'GET' && request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
-    event.respondWith(
-      caches.match('/index.html').then(cacheResp => {
-        const networkFetch = fetch(request).then(networkResp => {
-          // обновляем кэш
-          caches.open(CACHE_NAME).then(cache => cache.put('/index.html', networkResp.clone()));
-          return networkResp;
-        }).catch(() => cacheResp);
-        return networkFetch || cacheResp;
-      })
-    );
-    return;
-  }
-
-  // Для других запросов — сначала попробуем кэш, затем сеть
+self.addEventListener('fetch', (event) => {
+  // Try cache-first, then network, and update cache
   event.respondWith(
-    caches.match(request).then(cached => {
+    caches.match(event.request).then(cached => {
       if (cached) return cached;
-      return fetch(request).then(networkResp => {
-        // Кэшируем статические GET ресурсы (CSS, JS, images)
-        if (request.method === 'GET') {
-          const copy = networkResp.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+      return fetch(event.request).then(resp => {
+        // Only cache GET requests and successful responses
+        if (event.request.method === 'GET' && resp && resp.status === 200 && resp.type !== 'opaque'){
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
-        return networkResp;
-      }).catch(() => new Response('', { status: 503, statusText: 'Offline' }));
+        return resp;
+      }).catch(() => {
+        // Fallback for navigation to cached index.html
+        if (event.request.mode === 'navigate'){
+          return caches.match('./index.html');
+        }
+      });
     })
   );
 });

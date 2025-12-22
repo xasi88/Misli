@@ -1,15 +1,16 @@
-// Optional: add your Firebase configuration here to enable remote backend.
-// Copy this file to firebase-config.js and replace the placeholder values with your project's config.
-// Example structure:
-// window.firebaseConfig = {
-//   apiKey: "...",
-//   authDomain: "...",
-//   projectId: "...",
-//   storageBucket: "...",
-//   messagingSenderId: "...",
-//   appId: "..."
-// };
+// Example Firebase configuration file (rename and fill values to use Firebase)
+// Save as firebase-config.js (or import) and include Firebase SDK before initializing.
+// Example usage:
+// <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+// <script src="./firebase-config.js"></script>
+// firebase.initializeApp(window.firebaseConfig);
 
-window.firebaseConfig = window.firebaseConfig || null;
-
-// Note: Before using Firestore you should also include Firebase SDK in index.html or provide via npm/build.
+window.firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID",
+  // measurementId: "G-XXXX"
+};

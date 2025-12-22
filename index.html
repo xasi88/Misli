@@ -1,90 +1,47 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#2A7FFF" />
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="stylesheet" href="/styles.css" />
-  <title>Мысли вокруг</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#1565C0" />
+  <title>Misli — Prototype</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+  <meta name="description" content="Misli PWA prototype — blue design" />
 </head>
 <body>
-  <div class="app-shell">
-    <header class="header">
-      <div class="header-inner">
-        <div class="logo">
-          <div class="cloud">☁️</div>
-          <div class="title">Мысли вокруг</div>
-        </div>
-        <button class="icon-btn" id="notificationsBtn" aria-label="Уведомления">🔔</button>
-      </div>
-      <div class="wave"></div>
+  <main class="app-root">
+    <header class="app-header">
+      <img src="./icons/icon-192.png" alt="Misli" class="logo">
+      <h1>Misli</h1>
+      <p class="tagline">Prototype — blue design</p>
     </header>
 
-    <main class="container">
-      <!-- LIST VIEW -->
-      <section id="listView" class="screen active">
-        <div class="controls">
-          <div class="radius-select" id="radiusSelect">
-            <span class="pin">📍</span>
-            <span id="radiusLabel">Радиус: <strong id="radiusValue">500 метров</strong></span>
-            <select id="radiusDropdown" aria-label="Выбор радиуса">
-              <option value="100">100 м</option>
-              <option value="500">500 м</option>
-              <option value="1000">1 км</option>
-              <option value="5000">5 км</option>
-              <option value="10000">10 км</option>
-              <option value="50000">50 км</option>
-              <option value="100000">100 км</option>
-            </select>
-          </div>
+    <section class="card">
+      <h2>Welcome</h2>
+      <p>This is a lightweight PWA prototype. It works offline thanks to a service worker and is installable via the web manifest.</p>
+      <div class="controls">
+        <button id="actionBtn" class="btn primary">Get Started</button>
+        <button id="offlineBtn" class="btn">Check Offline</button>
+      </div>
+      <p id="status" class="status">Status: online</p>
+    </section>
 
-          <div class="radius-tabs" id="radiusTabs">
-            <button data-radius="100">100 м</button>
-            <button data-radius="500" class="active">500 м</button>
-            <button data-radius="1000">1 км</button>
-            <button data-radius="5000">5 км</button>
-            <button data-radius="10000">10 км</button>
-            <button data-radius="50000">50 км</button>
-            <button data-radius="100000">100 км</button>
-          </div>
-        </div>
+    <footer class="app-footer">
+      <small>Built for demonstration. Replace firebase-config.example.js with your config if you use Firebase.</small>
+    </footer>
+  </main>
 
-        <div id="thoughtList" class="thought-list">
-          <!-- карточки вставляются JS -->
-        </div>
-
-        <div class="bottom-action">
-          <button id="writeBtn" class="primary-btn large">Написать мысль</button>
-        </div>
-      </section>
-
-      <!-- WRITE VIEW -->
-      <section id="writeView" class="screen">
-        <div class="write-header">
-          <button id="backBtn" class="back-btn">←</button>
-          <div class="write-title">Написать мысль</div>
-        </div>
-
-        <div class="write-area">
-          <textarea id="thoughtInput" placeholder="Введите вашу мысль..." maxlength="10000"></textarea>
-          <div class="row between muted">
-            <div id="dailyLimitText">Можно написать <strong id="remainingPerDay">1</strong> мысль в <strong>24</strong> часа.</div>
-            <div id="charCounter" class="muted">0 / 10000 знаков</div>
-          </div>
-        </div>
-
-        <div class="write-actions">
-          <button id="cancelBtn" class="secondary-btn">Отмена</button>
-          <button id="publishBtn" class="primary-btn">Опубликовать</button>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer-bar"></footer>
-  </div>
-
-  <script src="/firebase-config.example.js"></script>
-  <script src="/app.js"></script>
+  <script src="./firebase-config.example.js"></script>
+  <script src="./app.js"></script>
+  <script>
+    // Register service worker using a relative path
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service worker registered.', reg))
+        .catch(err => console.warn('SW registration failed:', err));
+    }
+  </script>
 </body>
 </html>
