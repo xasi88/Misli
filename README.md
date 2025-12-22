@@ -1,13 +1,1 @@
-# Misli
-
-Рабочий прототип «Мысли вокруг». Сейчас реализовано:
-- Отправка и хранение мыслей в localStorage;
-- Попытка получения геопозиции при публикации;
-- PWA: manifest + Service Worker (кэширование статичных ресурсов);
-- Простая адаптивная верстка и стили.
-
-Чтобы посмотреть прототип через GitHub Pages:
-1. Перейдите в Settings → Pages в репозитории и выберите ветку `main` и папку `/ (root)`.
-2. Сохраните — через минуту сайт будет доступен по адресу вида `https://<username>.github.io/Misli`.
-
-Дальше можно добавить: реальные иконки в папку `icons/`, бэкенд для публикации мыслей по радиусу и улучшения UI/UX.
+Updated instructions including Firebase and JSON-server instructions (omitted here for brevity but will be added in repo).

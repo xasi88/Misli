@@ -9,144 +9,82 @@
   <title>Мысли вокруг</title>
 </head>
 <body>
-  <header class="header">
-    <h1>Мысли вокруг</h1>
-  </header>
-
-  <main class="container" id="app">
-    <section class="thought-card">
-      <form id="thoughtForm">
-        <label for="thoughtInput" class="sr-only">Введите вашу мысль</label>
-        <textarea id="thoughtInput" placeholder="Введите вашу мысль..." required></textarea>
-        <div style="margin-top:0.75rem;">
-          <button type="submit">Опубликовать мысль</button>
-          <button type="button" id="clearBtn" style="margin-left:0.5rem; background:#ccc; color:#000;">Очистить все</button>
+  <div class="app-shell">
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <div class="cloud">☁️</div>
+          <div class="title">Мысли вокруг</div>
         </div>
-      </form>
-    </section>
+        <button class="icon-btn" id="notificationsBtn" aria-label="Уведомления">🔔</button>
+      </div>
+      <div class="wave"></div>
+    </header>
 
-    <section id="thoughtList">
-      <!-- Здесь будут отображаться мысли -->
-    </section>
-  </main>
+    <main class="container">
+      <!-- LIST VIEW -->
+      <section id="listView" class="screen active">
+        <div class="controls">
+          <div class="radius-select" id="radiusSelect">
+            <span class="pin">📍</span>
+            <span id="radiusLabel">Радиус: <strong id="radiusValue">500 метров</strong></span>
+            <select id="radiusDropdown" aria-label="Выбор радиуса">
+              <option value="100">100 м</option>
+              <option value="500">500 м</option>
+              <option value="1000">1 км</option>
+              <option value="5000">5 км</option>
+              <option value="10000">10 км</option>
+              <option value="50000">50 км</option>
+              <option value="100000">100 км</option>
+            </select>
+          </div>
 
-  <footer style="text-align:center; padding:1rem; color:#666;">
-    &copy; Мысли вокруг
-  </footer>
+          <div class="radius-tabs" id="radiusTabs">
+            <button data-radius="100">100 м</button>
+            <button data-radius="500" class="active">500 м</button>
+            <button data-radius="1000">1 км</button>
+            <button data-radius="5000">5 км</button>
+            <button data-radius="10000">10 км</button>
+            <button data-radius="50000">50 км</button>
+            <button data-radius="100000">100 км</button>
+          </div>
+        </div>
 
-  <script>
-    // Service Worker регистрация
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(reg => {
-          console.log('Service Worker registered with scope:', reg.scope);
-        }).catch(err => {
-          console.warn('Service Worker registration failed:', err);
-        });
-      });
-    }
+        <div id="thoughtList" class="thought-list">
+          <!-- карточки вставляются JS -->
+        </div>
 
-    // Работа с мыслями (localStorage)
-    (function () {
-      const STORAGE_KEY = 'mysli_thoughts_v1';
-      const form = document.getElementById('thoughtForm');
-      const input = document.getElementById('thoughtInput');
-      const list = document.getElementById('thoughtList');
-      const clearBtn = document.getElementById('clearBtn');
+        <div class="bottom-action">
+          <button id="writeBtn" class="primary-btn large">Написать мысль</button>
+        </div>
+      </section>
 
-      function loadThoughts() {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-          console.error('Ошибка чтения localStorage', e);
-          return [];
-        }
-      }
+      <!-- WRITE VIEW -->
+      <section id="writeView" class="screen">
+        <div class="write-header">
+          <button id="backBtn" class="back-btn">←</button>
+          <div class="write-title">Написать мысль</div>
+        </div>
 
-      function saveThoughts(items) {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-        } catch (e) {
-          console.error('Ошибка записи в localStorage', e);
-        }
-      }
+        <div class="write-area">
+          <textarea id="thoughtInput" placeholder="Введите вашу мысль..." maxlength="10000"></textarea>
+          <div class="row between muted">
+            <div id="dailyLimitText">Можно написать <strong id="remainingPerDay">1</strong> мысль в <strong>24</strong> часа.</div>
+            <div id="charCounter" class="muted">0 / 10000 знаков</div>
+          </div>
+        </div>
 
-      function render() {
-        const items = loadThoughts().slice().reverse(); // newest first
-        list.innerHTML = '';
-        if (items.length === 0) {
-          const empty = document.createElement('div');
-          empty.className = 'thought-card';
-          empty.innerHTML = '<p>Здесь будет отображаться ваша лента мыслей по радиусу.</p>';
-          list.appendChild(empty);
-          return;
-        }
+        <div class="write-actions">
+          <button id="cancelBtn" class="secondary-btn">Отмена</button>
+          <button id="publishBtn" class="primary-btn">Опубликовать</button>
+        </div>
+      </section>
+    </main>
 
-        items.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'thought-card';
-          const date = new Date(item.createdAt);
-          const coords = (item.lat && item.lng) ? `<div class="meta">📍 ${item.lat.toFixed(4)}, ${item.lng.toFixed(4)}</div>` : '<div class="meta">📍 не указано</div>';
-          card.innerHTML = `
-            <div class="text">${escapeHtml(item.text)}</div>
-            <div class="meta">🕒 ${date.toLocaleString()} ${coords}</div>
-          `;
-          list.appendChild(card);
-        });
-      }
+    <footer class="footer-bar"></footer>
+  </div>
 
-      function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const text = input.value.trim();
-        if (!text) return;
-
-        // Попытаться получить геопозицию (не блокировать публикацию)
-        if ('geolocation' in navigator) {
-          navigator.geolocation.getCurrentPosition(pos => {
-            storeThought(text, pos.coords.latitude, pos.coords.longitude);
-          }, err => {
-            console.warn('Геопозиция не получена:', err.message);
-            storeThought(text, null, null);
-          }, { maximumAge: 60_000, timeout: 5000 });
-        } else {
-          storeThought(text, null, null);
-        }
-
-        input.value = '';
-      });
-
-      clearBtn.addEventListener('click', () => {
-        if (!confirm('Очистить все мысли?')) return;
-        saveThoughts([]);
-        render();
-      });
-
-      function storeThought(text, lat = null, lng = null) {
-        const items = loadThoughts();
-        items.push({
-          id: Date.now(),
-          text,
-          createdAt: Date.now(),
-          lat,
-          lng
-        });
-        saveThoughts(items);
-        render();
-      }
-
-      // initial render
-      render();
-
-      // expose for debugging
-      window.__mysli = { loadThoughts, saveThoughts, render };
-    })();
-  </script>
+  <script src="/firebase-config.example.js"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
