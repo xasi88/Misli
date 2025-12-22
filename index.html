@@ -1,76 +1,152 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.webmanifest">
-    <title>Мысли вокруг</title>
-    <style>
-        /* Базовые стили для интерфейса */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f9;
-        }
-        .header {
-            background: linear-gradient(90deg, #2A7FFF, #66A3FF);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-        .container {
-            padding: 1rem;
-        }
-        .thought-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2A7FFF" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+  <title>Мысли вокруг</title>
 </head>
 <body>
-
-<div class="header">
+  <header class="header">
     <h1>Мысли вокруг</h1>
-</div>
+  </header>
 
-<div class="container">
-    <div class="thought-card">
-        <p>Здесь будет отображаться ваша лента мыслей по радиусу.</p>
-    </div>
-    <!-- Добавим больше карточек мыслей позже -->
-</div>
+  <main class="container" id="app">
+    <section class="thought-card">
+      <form id="thoughtForm">
+        <label for="thoughtInput" class="sr-only">Введите вашу мысль</label>
+        <textarea id="thoughtInput" placeholder="Введите вашу мысль..." required></textarea>
+        <div style="margin-top:0.75rem;">
+          <button type="submit">Опубликовать мысль</button>
+          <button type="button" id="clearBtn" style="margin-left:0.5rem; background:#ccc; color:#000;">Очистить все</button>
+        </div>
+      </form>
+    </section>
 
+    <section id="thoughtList">
+      <!-- Здесь будут отображаться мысли -->
+    </section>
+  </main>
+
+  <footer style="text-align:center; padding:1rem; color:#666;">
+    &copy; Мысли вокруг
+  </footer>
+
+  <script>
+    // Service Worker регистрация
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('Service Worker registered with scope:', reg.scope);
+        }).catch(err => {
+          console.warn('Service Worker registration failed:', err);
+        });
+      });
+    }
+
+    // Работа с мыслями (localStorage)
+    (function () {
+      const STORAGE_KEY = 'mysli_thoughts_v1';
+      const form = document.getElementById('thoughtForm');
+      const input = document.getElementById('thoughtInput');
+      const list = document.getElementById('thoughtList');
+      const clearBtn = document.getElementById('clearBtn');
+
+      function loadThoughts() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          console.error('Ошибка чтения localStorage', e);
+          return [];
+        }
+      }
+
+      function saveThoughts(items) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        } catch (e) {
+          console.error('Ошибка записи в localStorage', e);
+        }
+      }
+
+      function render() {
+        const items = loadThoughts().slice().reverse(); // newest first
+        list.innerHTML = '';
+        if (items.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'thought-card';
+          empty.innerHTML = '<p>Здесь будет отображаться ваша лента мыслей по радиусу.</p>';
+          list.appendChild(empty);
+          return;
+        }
+
+        items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'thought-card';
+          const date = new Date(item.createdAt);
+          const coords = (item.lat && item.lng) ? `<div class="meta">📍 ${item.lat.toFixed(4)}, ${item.lng.toFixed(4)}</div>` : '<div class="meta">📍 не указано</div>';
+          card.innerHTML = `
+            <div class="text">${escapeHtml(item.text)}</div>
+            <div class="meta">🕒 ${date.toLocaleString()} ${coords}</div>
+          `;
+          list.appendChild(card);
+        });
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        // Попытаться получить геопозицию (не блокировать публикацию)
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(pos => {
+            storeThought(text, pos.coords.latitude, pos.coords.longitude);
+          }, err => {
+            console.warn('Геопозиция не получена:', err.message);
+            storeThought(text, null, null);
+          }, { maximumAge: 60_000, timeout: 5000 });
+        } else {
+          storeThought(text, null, null);
+        }
+
+        input.value = '';
+      });
+
+      clearBtn.addEventListener('click', () => {
+        if (!confirm('Очистить все мысли?')) return;
+        saveThoughts([]);
+        render();
+      });
+
+      function storeThought(text, lat = null, lng = null) {
+        const items = loadThoughts();
+        items.push({
+          id: Date.now(),
+          text,
+          createdAt: Date.now(),
+          lat,
+          lng
+        });
+        saveThoughts(items);
+        render();
+      }
+
+      // initial render
+      render();
+
+      // expose for debugging
+      window.__mysli = { loadThoughts, saveThoughts, render };
+    })();
+  </script>
 </body>
 </html>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        }, error => {
-          console.log('Service Worker registration failed:', error);
-        });
-    });
-  }
-</script>
-
-<body>
-  <div class="header">
-    <h1>Мысли вокруг</h1>
-  </div>
-  <div class="container">
-    <form id="thoughtForm">
-      <textarea id="thoughtInput" placeholder="Введите вашу мысль..."></textarea>
-      <button type="submit">Опубликовать мысль</button>
-    </form>
-    <div id="thoughtList">
-      <!-- Здесь будут отображаться мысли -->
-    </div>
-  </div>
-</body>
