@@ -1,4 +1,4 @@
-// Minimal UI logic: tabs, write modal, char counter, 1-per-24h limit, local posts
+// Minimal journaling app logic with a daily posting window, streak stats, and local-first storage
 const SELECTORS = {
   tabs: document.querySelectorAll('.tab'),
   panels: document.querySelectorAll('.panel'),
@@ -12,12 +12,48 @@ const SELECTORS = {
   timelinePosts: document.getElementById('timelinePosts'),
   count: document.getElementById('count'),
   streak: document.getElementById('streak'),
-  cooldown: document.getElementById('cooldown')
+  longest: document.getElementById('longest'),
+  lastEntry: document.getElementById('lastEntry'),
+  lastEntryAgo: document.getElementById('lastEntryAgo'),
+  cooldown: document.getElementById('cooldown'),
+  nextWindow: document.getElementById('nextWindow'),
+  limitLabel: document.getElementById('limitLabel')
 };
 
-// Storage keys
-const POSTS_KEY = 'misli_posts_v1';
-const LAST_POST_KEY = 'misli_last_post_v1';
+const DAY_MS = 24 * 60 * 60 * 1000;
+const STORAGE_KEYS = {
+  posts: 'misli_posts_v1',
+  lastPost: 'misli_last_post_v1'
+};
+
+const store = {
+  load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEYS.posts);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    }catch(e){
+      return [];
+    }
+  },
+  save(posts){
+    localStorage.setItem(STORAGE_KEYS.posts, JSON.stringify(posts));
+  },
+  add(text){
+    const posts = this.load();
+    const now = Date.now();
+    posts.push({ t: now, text });
+    this.save(posts);
+    localStorage.setItem(STORAGE_KEYS.lastPost, String(now));
+    return now;
+  },
+  sortedDesc(){
+    return this.load().slice().sort((a,b)=>b.t - a.t);
+  },
+  lastPostTs(){
+    return parseInt(localStorage.getItem(STORAGE_KEYS.lastPost) || '0', 10) || 0;
+  }
+};
 
 function switchTab(target){
   SELECTORS.tabs.forEach(t=>t.classList.toggle('active', t.dataset.target===target));
@@ -30,7 +66,7 @@ SELECTORS.tabs.forEach(t=>t.addEventListener('click', ()=>switchTab(t.dataset.ta
 function openModal(){
   SELECTORS.writeModal.setAttribute('aria-hidden','false');
   SELECTORS.thought.focus();
-  updateCooldown();
+  updateCooldownUI();
 }
 function closeModal(){
   SELECTORS.writeModal.setAttribute('aria-hidden','true');
@@ -40,113 +76,218 @@ SELECTORS.closeModal.addEventListener('click', closeModal);
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
 
 // counter
-SELECTORS.thought.addEventListener('input', ()=>{
+function updateCounter(){
   const v = SELECTORS.thought.value || '';
   SELECTORS.counter.textContent = `${v.length} / ${SELECTORS.thought.maxLength}`;
-});
-
-function loadPosts(){
-  try{ return JSON.parse(localStorage.getItem(POSTS_KEY) || '[]'); }catch(e){return []}
+  SELECTORS.counter.classList.toggle('warn', v.length > SELECTORS.thought.maxLength - 40);
 }
-function savePosts(posts){ localStorage.setItem(POSTS_KEY, JSON.stringify(posts)); }
+SELECTORS.thought.addEventListener('input', updateCounter);
 
-function renderPosts(){
-  const posts = loadPosts().slice().reverse();
-  SELECTORS.posts.innerHTML = '';
-  SELECTORS.timelinePosts.innerHTML = '';
+function formatDateTime(ts){
+  return new Intl.DateTimeFormat(undefined, { dateStyle:'medium', timeStyle:'short' }).format(ts);
+}
+
+function formatDay(ts){
+  return new Intl.DateTimeFormat(undefined, { weekday:'short', month:'short', day:'numeric' }).format(ts);
+}
+
+function formatRelative(ts){
+  const diff = Date.now() - ts;
+  if(diff < 60_000) return 'just now';
+  const mins = Math.floor(diff/60_000);
+  if(mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins/60);
+  if(hours < 48) return `${hours}h ago`;
+  const days = Math.floor(hours/24);
+  return `${days}d ago`;
+}
+
+function createPostElement(post){
+  const el = document.createElement('article');
+  el.className = 'post enter';
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.textContent = formatDateTime(post.t);
+  const body = document.createElement('div');
+  body.className = 'body';
+  body.textContent = post.text;
+  el.append(meta, body);
+  requestAnimationFrame(()=>el.classList.add('play'));
+  return el;
+}
+
+function renderEmpty(target, message){
+  target.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'empty';
+  wrap.textContent = message;
+  target.appendChild(wrap);
+}
+
+function groupByDay(posts){
+  const map = new Map();
   posts.forEach(p=>{
-    const el = document.createElement('article');
-    el.className = 'post enter';
-    el.innerHTML = `
-      <div class="meta">${new Date(p.t).toLocaleString()}</div>
-      <div class="body">${escapeHtml(p.text)}</div>
-    `;
-    SELECTORS.posts.appendChild(el);
-    // timeline also
-    const t = el.cloneNode(true);
-    SELECTORS.timelinePosts.appendChild(t);
-    requestAnimationFrame(()=>el.classList.add('play'));
+    const d = new Date(p.t);
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const arr = map.get(dayStart) || [];
+    arr.push(p);
+    map.set(dayStart, arr);
   });
-  SELECTORS.count.textContent = posts.length;
-  // simple streak (consecutive days with posts)
-  SELECTORS.streak.textContent = calcStreak(loadPosts());
+  return Array.from(map.entries()).sort((a,b)=>b[0]-a[0]).map(([day, items])=>({ day, items: items.sort((a,b)=>b.t-a.t) }));
 }
 
-function calcStreak(posts){
-  if(!posts.length) return 0;
-  // assume posts sorted ascending
-  posts = posts.slice().sort((a,b)=>a.t-b.t);
-  let streak = 0;
-  let lastDay = null;
-  for(let i=posts.length-1;i>=0;i--){
-    const d = new Date(posts[i].t);
-    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-    if(lastDay===null){ streak=1; lastDay = day; }
-    else{
-      const diff = (lastDay - day) / (1000*60*60*24);
-      if(diff===1){ streak++; lastDay = day; }
-      else break;
+function renderFeed(posts){
+  SELECTORS.posts.innerHTML = '';
+  if(!posts.length) return renderEmpty(SELECTORS.posts, 'No thoughts yet. Start with one meaningful note.');
+  posts.forEach(p=>SELECTORS.posts.appendChild(createPostElement(p)));
+}
+
+function renderTimeline(posts){
+  SELECTORS.timelinePosts.innerHTML = '';
+  if(!posts.length) return renderEmpty(SELECTORS.timelinePosts, 'Your timeline will grow as you add thoughts.');
+  groupByDay(posts).forEach(({day, items})=>{
+    const section = document.createElement('div');
+    section.className = 'day-group';
+    const heading = document.createElement('div');
+    heading.className = 'meta';
+    heading.textContent = formatDay(day);
+    section.appendChild(heading);
+    items.forEach(p=>section.appendChild(createPostElement(p)));
+    SELECTORS.timelinePosts.appendChild(section);
+  });
+}
+
+function calcStreaks(posts){
+  if(!posts.length) return { current:0, longest:0 };
+  const days = groupByDay(posts).map(g=>g.day);
+  const tolerance = 5*60*1000; // allow small DST drift
+
+  // Longest streak across history
+  let longest = 1;
+  let run = 1;
+  for(let i=1;i<days.length;i++){
+    const diff = days[i-1] - days[i];
+    if(Math.abs(diff - DAY_MS) < tolerance){
+      run += 1;
+    }else{
+      run = 1;
+    }
+    longest = Math.max(longest, run);
+  }
+
+  // Current streak starting from the most recent day
+  let current = 1;
+  for(let i=1;i<days.length;i++){
+    const diff = days[i-1] - days[i];
+    if(Math.abs(diff - DAY_MS) < tolerance){
+      current += 1;
+    }else{
+      break;
     }
   }
-  return streak;
+
+  const todayStart = new Date().setHours(0,0,0,0);
+  const lastDay = days[0];
+  const currentStreak = (todayStart - lastDay) <= DAY_MS ? current : 0;
+  return { current: currentStreak, longest };
 }
 
-function escapeHtml(s){ return s.replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]; }); }
+function renderStats(posts){
+  SELECTORS.count.textContent = posts.length;
+  const streaks = calcStreaks(posts);
+  SELECTORS.streak.textContent = streaks.current;
+  SELECTORS.longest.textContent = streaks.longest;
 
-// posting
+  if(!posts.length){
+    SELECTORS.lastEntry.textContent = '—';
+    SELECTORS.lastEntryAgo.textContent = 'No posts yet';
+    return;
+  }
+  const last = posts[0].t;
+  SELECTORS.lastEntry.textContent = formatDateTime(last);
+  SELECTORS.lastEntryAgo.textContent = `Updated ${formatRelative(last)}`;
+}
+
 function canPost(){
-  const last = parseInt(localStorage.getItem(LAST_POST_KEY) || '0',10);
+  const last = store.lastPostTs();
   if(!last) return true;
-  const diff = Date.now() - last;
-  return diff >= 24*60*60*1000;
+  return (Date.now() - last) >= DAY_MS;
 }
 
 function timeUntilNext(){
-  const last = parseInt(localStorage.getItem(LAST_POST_KEY) || '0',10);
+  const last = store.lastPostTs();
   if(!last) return 0;
-  const remaining = 24*60*60*1000 - (Date.now() - last);
-  return Math.max(0, remaining);
+  return Math.max(0, DAY_MS - (Date.now() - last));
 }
 
-function updateCooldown(){
-  const ms = timeUntilNext();
-  if(ms<=0){ SELECTORS.cooldown.textContent = ''; SELECTORS.postBtn.disabled = false; return; }
-  SELECTORS.postBtn.disabled = true;
-  // simple human-friendly
+function humanDuration(ms){
   const h = Math.floor(ms/(1000*60*60));
   const m = Math.floor((ms - h*3600000)/(1000*60));
-  SELECTORS.cooldown.textContent = `Next post in ${h}h ${m}m`;
+  if(h <= 0 && m <= 0) return 'a few moments';
+  if(h <= 0) return `${m}m`;
+  return `${h}h ${m}m`;
+}
+
+function updateCooldownUI(){
+  const ms = timeUntilNext();
+  if(ms<=0){
+    SELECTORS.cooldown.textContent = '';
+    SELECTORS.nextWindow.textContent = 'Ready to post';
+    SELECTORS.postBtn.disabled = false;
+    return;
+  }
+  const label = `Next post in ${humanDuration(ms)}`;
+  SELECTORS.cooldown.textContent = label;
+  SELECTORS.nextWindow.textContent = label;
+  SELECTORS.postBtn.disabled = true;
+}
+
+function render(){
+  SELECTORS.limitLabel.textContent = '1 post / 24h • Local first';
+  const posts = store.sortedDesc();
+  renderFeed(posts);
+  renderTimeline(posts);
+  renderStats(posts);
+  updateCooldownUI();
 }
 
 SELECTORS.postBtn.addEventListener('click', ()=>{
-  if(!canPost()) return updateCooldown();
   const text = (SELECTORS.thought.value || '').trim();
   if(!text) return;
-  const posts = loadPosts();
-  posts.push({ t: Date.now(), text });
-  savePosts(posts);
-  localStorage.setItem(LAST_POST_KEY, String(Date.now()));
+  if(!canPost()){
+    updateCooldownUI();
+    return;
+  }
+  store.add(text);
   SELECTORS.thought.value = '';
-  SELECTORS.counter.textContent = `0 / ${SELECTORS.thought.maxLength}`;
+  updateCounter();
   closeModal();
-  renderPosts();
+  render();
 });
 
-// live cooldown updater
-setInterval(updateCooldown, 30*1000);
-updateCooldown();
-renderPosts();
+// Keep cooldown fresh while the tab is open
+setInterval(updateCooldownUI, 30*1000);
+updateCounter();
+render();
+
+// Listen for storage changes (multi-tab support)
+window.addEventListener('storage', (e)=>{
+  if(e.key === STORAGE_KEYS.posts || e.key === STORAGE_KEYS.lastPost){
+    render();
+  }
+});
 
 // Register Service Worker for PWA support
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
-// small helper to seed UI when empty (for demo only)
-if(!localStorage.getItem(POSTS_KEY)){
-  localStorage.setItem(POSTS_KEY, JSON.stringify([
-    {t: Date.now()-1000*60*60*24*3, text: 'First seeds of thought'},
-    {t: Date.now()-1000*60*60*24*1, text: 'A short reflection yesterday'}
-  ]));
-  renderPosts();
+// Demo seeds if empty
+if(!localStorage.getItem(STORAGE_KEYS.posts)){
+  store.save([
+    {t: Date.now()-DAY_MS*4, text: 'First seeds of thought'},
+    {t: Date.now()-DAY_MS*2, text: 'A short reflection yesterday'},
+    {t: Date.now()-DAY_MS*1, text: 'A reminder to slow down and breathe'}
+  ]);
+  render();
 }
