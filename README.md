@@ -2,6 +2,12 @@
 
 A minimal single-thought journaling web app. This branch contains a polished UI implementation that matches the provided prototype: two-column layout, gradient header with decorative wave, rounded tabs, a write screen modal with animations, character counter, and a 1-per-24h posting limit. It also includes basic PWA support (manifest + service worker).
 
+What's new in this pass
+- Header status pills that surface the 24h window and next available posting time.
+- More resilient streak stats (current + best), last entry metadata, and grouped timeline days.
+- Empty states, safer rendering, and local-first storage with cross-tab syncing.
+- Service worker cache bump to pick up new assets.
+
 Key files
 - index.html — main UI
 - styles.css — visual styling and animations

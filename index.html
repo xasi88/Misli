@@ -12,8 +12,14 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <h1 class="logo">Misli</h1>
-      <p class="tag">A small place for one meaningful thought every 24 hours</p>
+      <div class="header-copy">
+        <h1 class="logo">Misli</h1>
+        <p class="tag">A small place for one meaningful thought every 24 hours</p>
+        <div class="pills">
+          <span class="pill" id="limitLabel">1 post / 24h</span>
+          <span class="pill soft" id="nextWindow">Ready to post</span>
+        </div>
+      </div>
       <button id="writeBtn" class="btn primary">Write</button>
     </div>
     <!-- decorative wave -->
@@ -36,7 +42,7 @@
         <button class="tab" data-target="stats" role="tab">Stats</button>
       </nav>
       <div class="sidebar-bottom">
-        <small class="muted">You may post once every 24 hours.</small>
+        <small class="muted">Local first, offline ready. You may post once every 24 hours.</small>
       </div>
     </aside>
 
@@ -54,10 +60,28 @@
 
       <div id="stats" class="panel">
         <h2>Stats</h2>
-        <p class="muted">Streaks and counts will appear here.</p>
-        <div class="stats-grid">
-          <div class="stat">Posts <strong id="count">0</strong></div>
-          <div class="stat">Streak <strong id="streak">0</strong></div>
+        <p class="muted">Keep the habit going with streaks and milestones.</p>
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat">
+            <p class="label">Posts</p>
+            <strong id="count">0</strong>
+            <small class="muted">All-time</small>
+          </div>
+          <div class="stat">
+            <p class="label">Current streak</p>
+            <strong id="streak">0</strong>
+            <small class="muted">Consecutive days</small>
+          </div>
+          <div class="stat">
+            <p class="label">Best streak</p>
+            <strong id="longest">0</strong>
+            <small class="muted">Record run</small>
+          </div>
+          <div class="stat">
+            <p class="label">Last entry</p>
+            <strong id="lastEntry">—</strong>
+            <small class="muted" id="lastEntryAgo">No posts yet</small>
+          </div>
         </div>
       </div>
     </section>
