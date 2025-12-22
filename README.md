@@ -1,22 +1,18 @@
-Misli — PWA prototype
+# Misli
 
-This repository contains a lightweight Progressive Web App prototype designed with a blue theme. The files are intended to be served from the repository root on the main branch (suitable for GitHub Pages configured to serve from branch main / root).
+A minimal single-thought journaling web app. This branch contains a polished UI implementation that matches the provided prototype: two-column layout, gradient header with decorative wave, rounded tabs, a write screen modal with animations, character counter, and a 1-per-24h posting limit. It also includes basic PWA support (manifest + service worker).
 
-Included files
-- index.html — main entry (registers service worker using a relative path)
-- styles.css — blue design styles
-- app.js — small demo behavior (online/offline status, demo action, install UX)
-- sw.js — service worker (caches core assets, offline fallback)
-- manifest.webmanifest — Web App Manifest (installable settings, icons)
-- firebase-config.example.js — example Firebase config (rename and populate to use)
-- icons/icon-192.png, icons/icon-512.png — placeholder icons
+Key files
+- index.html — main UI
+- styles.css — visual styling and animations
+- app.js — client behavior (tabs, modal, counter, 24h limit, localStorage persistence)
+- sw.js — simple service worker to cache assets
+- manifest.webmanifest — PWA manifest
+- firebase-config.example.js — example placeholder for Firebase configuration
+- icons/* — app icons
 
-Notes and next steps
-- Replace firebase-config.example.js with your actual config (and add Firebase SDKs) if you intend to use Firebase services.
-- Replace the icons with branded artwork of the correct sizes (192x192 and 512x512 PNGs) to improve install appearance.
-- GitHub Pages: ensure the repository is configured to serve from branch "main" / root in Settings → Pages.
-- Asset paths use relative references (./file). Service worker is registered at ./sw.js so GitHub Pages serving from the repo root will scope it correctly.
+Notes
+- Posting is enforced locally via localStorage and is not backed by a server in this example. Replace with a backend (e.g. Firebase) if you want server-side enforcement.
+- Icons included are placeholders; replace them with properly designed assets for production.
 
-If you'd like, I can:
-- Replace the placeholder icons with specific images you provide.
-- Customize colors, copy, or add additional pages and offline fallbacks.
+Commit: "Polish UI to match prototype: two-column layout, header wave, tabs, write screen, animations, PWA support"

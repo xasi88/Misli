@@ -3,45 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#1565C0" />
-  <title>Misli — Prototype</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="icon" type="image/png" href="./icons/icon-192.png">
-  <meta name="description" content="Misli PWA prototype — blue design" />
+  <title>Misli — Reflect</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#0b69ff" />
+  <link rel="icon" href="/icons/icon-192.png" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <main class="app-root">
-    <header class="app-header">
-      <img src="./icons/icon-192.png" alt="Misli" class="logo">
-      <h1>Misli</h1>
-      <p class="tagline">Prototype — blue design</p>
-    </header>
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="logo">Misli</h1>
+      <p class="tag">A small place for one meaningful thought every 24 hours</p>
+      <button id="writeBtn" class="btn primary">Write</button>
+    </div>
+    <!-- decorative wave -->
+    <svg class="header-wave" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" x2="1">
+          <stop offset="0%" stop-color="#6fb3ff" />
+          <stop offset="100%" stop-color="#0b69ff" />
+        </linearGradient>
+      </defs>
+      <path d="M0,0 C300,80 900,0 1200,60 L1200,120 L0,120 Z" fill="url(#g)"></path>
+    </svg>
+  </header>
 
-    <section class="card">
-      <h2>Welcome</h2>
-      <p>This is a lightweight PWA prototype. It works offline thanks to a service worker and is installable via the web manifest.</p>
-      <div class="controls">
-        <button id="actionBtn" class="btn primary">Get Started</button>
-        <button id="offlineBtn" class="btn">Check Offline</button>
+  <main class="container">
+    <aside class="sidebar">
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-target="feed" role="tab">Feed</button>
+        <button class="tab" data-target="timeline" role="tab">Timeline</button>
+        <button class="tab" data-target="stats" role="tab">Stats</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <small class="muted">You may post once every 24 hours.</small>
       </div>
-      <p id="status" class="status">Status: online</p>
-    </section>
+    </aside>
 
-    <footer class="app-footer">
-      <small>Built for demonstration. Replace firebase-config.example.js with your config if you use Firebase.</small>
-    </footer>
+    <section class="content">
+      <div id="feed" class="panel active">
+        <h2>Today</h2>
+        <div id="posts" class="posts" aria-live="polite"></div>
+      </div>
+
+      <div id="timeline" class="panel">
+        <h2>Timeline</h2>
+        <p class="muted">A chronological view of past posts.</p>
+        <div id="timelinePosts" class="posts"></div>
+      </div>
+
+      <div id="stats" class="panel">
+        <h2>Stats</h2>
+        <p class="muted">Streaks and counts will appear here.</p>
+        <div class="stats-grid">
+          <div class="stat">Posts <strong id="count">0</strong></div>
+          <div class="stat">Streak <strong id="streak">0</strong></div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <script src="./firebase-config.example.js"></script>
-  <script src="./app.js"></script>
-  <script>
-    // Register service worker using a relative path
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service worker registered.', reg))
-        .catch(err => console.warn('SW registration failed:', err));
-    }
-  </script>
+  <!-- Write modal -->
+  <div id="writeModal" class="modal" aria-hidden="true">
+    <div class="modal-panel">
+      <header>
+        <h3>Write a thought</h3>
+        <button id="closeModal" class="btn icon">✕</button>
+      </header>
+      <main>
+        <textarea id="thought" maxlength="280" placeholder="One meaningful thought..." rows="6"></textarea>
+        <div class="row between">
+          <div class="counter" id="counter">0 / 280</div>
+          <div class="muted" id="cooldown"></div>
+        </div>
+      </main>
+      <footer>
+        <button id="postBtn" class="btn primary">Post</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="/firebase-config.example.js"></script>
+  <script src="/app.js" type="module"></script>
 </body>
 </html>
