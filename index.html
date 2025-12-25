@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Мысли вокруг">
-  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22%D0%9C%D1%8B%D1%81%D0%BB%D0%B8%20%D0%B2%D0%BE%D0%BA%D1%80%D1%83%D0%B3%22%2C%22short_name%22%3A%22%D0%9C%D1%8B%D1%81%D0%BB%D0%B8%22%2C%22description%22%3A%22%D0%90%D0%BD%D0%BE%D0%BD%D0%B8%D0%BC%D0%BD%D1%8B%D0%B5%20%D0%BC%D1%8B%D1%81%D0%BB%D0%B8%20%D0%B2%D0%BE%D0%BA%D1%80%D1%83%D0%B3%20%D0%B2%D0%B0%D1%81%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f8%22%2C%22theme_color%22%3A%22%232a7fff%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%253E%253Cdefs%253E%253ClinearGradient%20id%3D%27g%27%20x1%3D%270%2525%27%20y1%3D%270%2525%27%20x2%3D%27100%2525%27%20y2%3D%27100%2525%27%253E%253Cstop%20offset%3D%270%2525%27%20stop-color%3D%27%25232a7fff%27%2F%253E%253Cstop%20offset%3D%27100%2525%27%20stop-color%3D%27%252366a3ff%27%2F%253E%253C%2FlinearGradient%253E%253C%2Fdefs%253E%253Crect%20fill%3D%27url%2528%2523g%2529%27%20width%3D%27192%27%20height%3D%27192%27%20rx%3D%2740%27%2F%253E%253Cpath%20fill%3D%27white%27%20d%3D%27M96%2036c-26.5%200-48%2018.5-48%2041.3c0%2013.5%207.5%2025.5%2019.2%2033.2l-3.2%2019.5l20-12c4%201%208%201.5%2012%201.5c26.5%200%2048-18.5%2048-41.3S122.5%2036%2096%2036z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22%D0%9C%D1%8B%D1%81%D0%BB%D0%B8%20%D0%B2%D0%BE%D0%BA%D1%80%D1%83%D0%B3%22%2C%22short_name%22%3A%22%D0%9C%D1%8B%D1%81%D0%BB%D0%B8%22%2C%22description%22%3A%22%D0%90%D0%BD%D0%BE%D0%BD%D0%B8%D0%BC%D0%BD%D1%8B%D0%B5%20%D0%BC%D1%8B%D1%81%D0%BB%D0%B8%20%D0%B2%D0%BE%D0%BA%D1%80%D1%83%D0%B3%20%D0%B2%D0%B0%D1%81%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f8%22%2C%22theme_color%22%3A%22%232a7fff%22%2C%22orientation%22%3A%22portrait%22%7D">
   <title>Мысли вокруг</title>
   <style>
     :root {
@@ -17,6 +17,9 @@
       --muted: #6b7280;
       --blue1: #2a7fff;
       --blue2: #66a3ff;
+      --green1: #10b981;
+      --red1: #ef4444;
+      --orange1: #f59e0b;
       --shadow1: 0 8px 20px rgba(16,24,40,0.10);
       --shadow2: 0 2px 8px rgba(16,24,40,0.10);
       --radius-lg: 18px;
@@ -93,6 +96,7 @@
       cursor: pointer;
       border-radius: 50%;
       transition: background 0.15s;
+      position: relative;
     }
 
     .header-icon:active {
@@ -103,6 +107,29 @@
       width: 24px;
       height: 24px;
       fill: white;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      background: var(--red1);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--blue1);
+      animation: badgePulse 2s infinite;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
 
     .header-title {
@@ -140,21 +167,186 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
+    /* Toast Notification */
+    .toast-container {
+      position: absolute;
+      top: 80px;
+      left: 16px;
+      right: 16px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 32px rgba(16,24,40,0.2);
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(-100px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      pointer-events: auto;
+      cursor: pointer;
+      border-left: 4px solid var(--blue1);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--blue1), var(--blue2));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .toast-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    .toast-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .toast-text {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Notifications Panel */
+    .notifications-panel {
+      position: absolute;
+      top: 70px;
+      left: 16px;
+      right: 16px;
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 32px rgba(16,24,40,0.2);
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 200;
+      transform: translateY(-20px);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s;
+    }
+
+    .notifications-panel.open {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .notifications-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .notifications-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .notifications-clear {
+      font-size: 13px;
+      color: var(--blue1);
+      cursor: pointer;
+    }
+
+    .notification-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+
+    .notification-item:active {
+      background: #f5f7fa;
+    }
+
+    .notification-item.unread {
+      background: #f0f7ff;
+    }
+
+    .notification-item-text {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .notification-item-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .notifications-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     /* Feed Screen */
+    .radius-selector {
+      position: relative;
+      margin: 12px 16px 0;
+      z-index: 100;
+    }
+
     .radius-panel {
       background: var(--card);
-      margin: 12px 16px 0;
       padding: 14px 16px;
       border-radius: var(--radius-md);
       box-shadow: var(--shadow2);
       display: flex;
       align-items: center;
       cursor: pointer;
-      transition: transform 0.1s;
+      transition: transform 0.1s, border-radius 0.2s;
+      position: relative;
+      z-index: 2;
     }
 
     .radius-panel:active {
       transform: scale(0.98);
+    }
+
+    .radius-panel.open {
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
     }
 
     .radius-panel svg {
@@ -176,46 +368,126 @@
       width: 20px;
       height: 20px;
       fill: var(--muted);
+      transition: transform 0.25s ease;
     }
 
-    .radius-tabs {
+    .radius-panel.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .radius-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      box-shadow: var(--shadow2);
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.2s ease;
+      z-index: 1;
+    }
+
+    .radius-dropdown.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .radius-option {
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--text);
+      cursor: pointer;
       display: flex;
-      gap: 4px;
-      padding: 12px 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s;
+      border-top: 1px solid #f0f0f0;
     }
 
-    .radius-tabs::-webkit-scrollbar {
-      display: none;
+    .radius-option:active {
+      background: #f5f7fa;
     }
 
-    .radius-tab {
-      padding: 8px 12px;
+    .radius-option.active {
+      color: var(--blue1);
+      font-weight: 600;
+      background: #f0f7ff;
+    }
+
+    .radius-option .check {
+      width: 20px;
+      height: 20px;
+      fill: var(--blue1);
+      opacity: 0;
+    }
+
+    .radius-option.active .check {
+      opacity: 1;
+    }
+
+    .radius-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.2);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+      z-index: 99;
+    }
+
+    .radius-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px 0;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      background: var(--card);
+      border-radius: var(--radius-sm);
       font-size: 13px;
       color: var(--muted);
-      white-space: nowrap;
       cursor: pointer;
-      border-bottom: 2px solid transparent;
       transition: all 0.15s;
-      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .radius-tab:active {
-      opacity: 0.7;
+    .tab-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
     }
 
-    .radius-tab.active {
-      color: var(--blue1);
-      border-bottom-color: var(--blue1);
-      font-weight: 600;
+    .tab-btn.active {
+      background: var(--blue1);
+      color: white;
+    }
+
+    .tab-btn:active {
+      transform: scale(0.97);
     }
 
     .feed-list {
       flex: 1;
       overflow-y: auto;
-      padding: 4px 16px 100px;
+      padding: 12px 16px 100px;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -225,17 +497,71 @@
       box-shadow: var(--shadow2);
       padding: 16px;
       margin-bottom: 12px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+
+    .thought-card:active {
+      transform: scale(0.98);
+    }
+
+    .thought-card.expanded {
+      box-shadow: 0 4px 16px rgba(16,24,40,0.15);
+    }
+
+    .thought-card.new-thought {
+      animation: newThoughtPulse 0.5s ease;
+    }
+
+    @keyframes newThoughtPulse {
+      0% { transform: scale(0.95); opacity: 0; }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .thought-text {
       font-size: 15px;
-      line-height: 1.5;
+      line-height: 1.6;
       color: var(--text);
+      margin-bottom: 12px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      cursor: pointer;
+    }
+
+    .thought-text.collapsed {
       display: -webkit-box;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: 6;
       -webkit-box-orient: vertical;
       overflow: hidden;
+    }
+
+    .thought-expand-hint {
+      color: var(--blue1);
+      font-size: 13px;
+      font-weight: 500;
       margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .thought-expand-hint svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--blue1);
+      transition: transform 0.2s;
+    }
+
+    .thought-card.expanded .thought-expand-hint svg {
+      transform: rotate(180deg);
+    }
+
+    .thought-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .thought-meta {
@@ -250,6 +576,43 @@
       height: 14px;
       fill: var(--muted);
       margin-right: 6px;
+    }
+
+    .thought-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .thought-action-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: #f5f7fa;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .thought-action-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--muted);
+      transition: fill 0.15s;
+    }
+
+    .thought-action-btn:active {
+      transform: scale(0.9);
+    }
+
+    .thought-action-btn.saved {
+      background: #fef3c7;
+    }
+
+    .thought-action-btn.saved svg {
+      fill: var(--orange1);
     }
 
     .empty-state {
@@ -396,6 +759,26 @@
       flex: 1;
     }
 
+    /* Saved Screen */
+    .saved-header {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .saved-header svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--orange1);
+    }
+
+    .saved-header span {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
     @media (max-width: 440px) {
       body {
         padding: 0;
@@ -420,17 +803,44 @@
       <!-- Dynamic header content -->
     </header>
     
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+    
+    <!-- Notifications Panel -->
+    <div class="notifications-panel" id="notifications-panel">
+      <div class="notifications-header">
+        <span class="notifications-title">Уведомления</span>
+        <span class="notifications-clear" id="notifications-clear">Очистить</span>
+      </div>
+      <div id="notifications-list"></div>
+    </div>
+    
     <main class="content">
       <!-- Feed Screen -->
       <section class="screen active" id="screen-feed">
-        <div class="radius-panel" id="radius-panel">
-          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          <span class="radius-panel-text" id="radius-text">Радиус: 500 метров</span>
-          <svg class="chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        <div class="radius-overlay" id="radius-overlay"></div>
+        
+        <div class="radius-selector">
+          <div class="radius-panel" id="radius-panel">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span class="radius-panel-text" id="radius-text">Радиус: 500 метров</span>
+            <svg class="chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+          </div>
+          <div class="radius-dropdown" id="radius-dropdown">
+            <!-- Dynamic options -->
+          </div>
         </div>
         
-        <div class="radius-tabs" id="radius-tabs">
-          <!-- Dynamic tabs -->
+        <!-- Tabs -->
+        <div class="tabs-container">
+          <button class="tab-btn active" id="tab-all">
+            <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            Все мысли
+          </button>
+          <button class="tab-btn" id="tab-saved">
+            <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+            Сохранённые
+          </button>
         </div>
         
         <div class="feed-list" id="feed-list">
@@ -450,7 +860,7 @@
             <div class="char-counter" id="char-counter">0 / 10000 знаков</div>
           </div>
           <div class="write-info" id="write-info">
-            Можно написать 1 мысль в 24 часа.
+            Можно написать 1 мысль в час.
           </div>
         </div>
         <div class="write-buttons">
@@ -488,27 +898,20 @@
         this.resume();
 
         switch (type) {
-          case 'tap':
-            this.playTap();
-            break;
-          case 'success':
-            this.playSuccess();
-            break;
-          case 'navigate':
-            this.playNavigate();
-            break;
-          case 'back':
-            this.playBack();
-            break;
-          case 'error':
-            this.playError();
-            break;
-          case 'select':
-            this.playSelect();
-            break;
-          case 'type':
-            this.playType();
-            break;
+          case 'tap': this.playTap(); break;
+          case 'success': this.playSuccess(); break;
+          case 'navigate': this.playNavigate(); break;
+          case 'back': this.playBack(); break;
+          case 'error': this.playError(); break;
+          case 'select': this.playSelect(); break;
+          case 'type': this.playType(); break;
+          case 'open': this.playOpen(); break;
+          case 'close': this.playClose(); break;
+          case 'expand': this.playExpand(); break;
+          case 'collapse': this.playCollapse(); break;
+          case 'notification': this.playNotification(); break;
+          case 'save': this.playSave(); break;
+          case 'unsave': this.playUnsave(); break;
         }
       },
 
@@ -534,28 +937,19 @@
       },
 
       playSuccess() {
-        const now = this.ctx.currentTime;
-        
-        // Ascending arpeggio
         [523, 659, 784].forEach((freq, i) => {
-          setTimeout(() => {
-            this.createOscillator(freq, 'sine', 0.15, 0.2);
-          }, i * 80);
+          setTimeout(() => this.createOscillator(freq, 'sine', 0.15, 0.2), i * 80);
         });
       },
 
       playNavigate() {
         this.createOscillator(600, 'sine', 0.08, 0.12);
-        setTimeout(() => {
-          this.createOscillator(900, 'sine', 0.1, 0.15);
-        }, 50);
+        setTimeout(() => this.createOscillator(900, 'sine', 0.1, 0.15), 50);
       },
 
       playBack() {
         this.createOscillator(700, 'sine', 0.08, 0.12);
-        setTimeout(() => {
-          this.createOscillator(500, 'sine', 0.1, 0.1);
-        }, 50);
+        setTimeout(() => this.createOscillator(500, 'sine', 0.1, 0.1), 50);
       },
 
       playError() {
@@ -563,12 +957,51 @@
       },
 
       playSelect() {
-        this.createOscillator(1000, 'sine', 0.04, 0.1);
+        this.createOscillator(880, 'sine', 0.06, 0.15);
+        setTimeout(() => this.createOscillator(1100, 'sine', 0.08, 0.12), 40);
       },
 
       playType() {
         const freq = 400 + Math.random() * 200;
         this.createOscillator(freq, 'sine', 0.02, 0.05);
+      },
+
+      playOpen() {
+        this.createOscillator(400, 'sine', 0.08, 0.12);
+        setTimeout(() => this.createOscillator(600, 'sine', 0.1, 0.15), 60);
+        setTimeout(() => this.createOscillator(800, 'sine', 0.08, 0.1), 120);
+      },
+
+      playClose() {
+        this.createOscillator(800, 'sine', 0.06, 0.1);
+        setTimeout(() => this.createOscillator(600, 'sine', 0.08, 0.12), 50);
+        setTimeout(() => this.createOscillator(400, 'sine', 0.1, 0.1), 100);
+      },
+
+      playExpand() {
+        this.createOscillator(500, 'sine', 0.06, 0.1);
+        setTimeout(() => this.createOscillator(700, 'sine', 0.08, 0.12), 50);
+      },
+
+      playCollapse() {
+        this.createOscillator(700, 'sine', 0.06, 0.1);
+        setTimeout(() => this.createOscillator(500, 'sine', 0.08, 0.1), 50);
+      },
+
+      playNotification() {
+        [784, 988, 1175].forEach((freq, i) => {
+          setTimeout(() => this.createOscillator(freq, 'sine', 0.12, 0.18), i * 100);
+        });
+      },
+
+      playSave() {
+        this.createOscillator(523, 'sine', 0.1, 0.15);
+        setTimeout(() => this.createOscillator(784, 'sine', 0.15, 0.2), 80);
+      },
+
+      playUnsave() {
+        this.createOscillator(784, 'sine', 0.08, 0.12);
+        setTimeout(() => this.createOscillator(523, 'sine', 0.1, 0.1), 60);
       }
     };
 
@@ -578,28 +1011,51 @@
     const STORAGE_KEYS = {
       thoughts: 'mv_thoughts_v1',
       radius: 'mv_radius_v1',
-      lastPost: 'mv_last_post_at_v1'
+      lastPost: 'mv_last_post_at_v1',
+      expanded: 'mv_expanded_v1',
+      saved: 'mv_saved_v1',
+      notifications: 'mv_notifications_v1',
+      notifRead: 'mv_notif_read_v1'
     };
 
     const RADIUSES = [
-      { value: 100, label: '100 м' },
-      { value: 500, label: '500 м' },
-      { value: 1000, label: '1 км' },
-      { value: 5000, label: '5 км' },
-      { value: 10000, label: '10 км' },
-      { value: 50000, label: '50 км' },
-      { value: 100000, label: '100 км' }
+      { value: 100, label: '100 м', labelFull: '100 метров' },
+      { value: 500, label: '500 м', labelFull: '500 метров' },
+      { value: 1000, label: '1 км', labelFull: '1 километр' },
+      { value: 5000, label: '5 км', labelFull: '5 километров' },
+      { value: 10000, label: '10 км', labelFull: '10 километров' },
+      { value: 50000, label: '50 км', labelFull: '50 километров' },
+      { value: 100000, label: '100 км', labelFull: '100 километров' }
     ];
 
     const MIN_CHARS = 100;
     const MAX_CHARS = 10000;
-    const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+    const PREVIEW_CHARS = 300;
+    const COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
+
+    const RANDOM_THOUGHTS = [
+      'Сегодня понял, что счастье - это не цель, а побочный эффект правильной жизни. Когда делаешь то, что нужно, оно приходит само.',
+      'Почему мы так боимся одиночества? Может потому, что боимся встретиться с собой настоящим, без масок и ролей.',
+      'Город такой шумный, а внутри - тишина. Странное ощущение, когда тысячи людей вокруг, но ты наедине со своими мыслями.',
+      'Каждый день мы делаем выбор, даже когда думаем, что не делаем. Бездействие - тоже выбор.',
+      'Интересно, сколько людей прямо сейчас думают о том же, о чём думаю я? Мы все связаны невидимыми нитями.',
+      'Закат сегодня особенно красивый. Почему мы так редко останавливаемся, чтобы просто посмотреть на небо?',
+      'Время - единственный ресурс, который невозможно вернуть. Потратьте его на то, что действительно важно.',
+      'Иногда лучшее решение - просто подождать. Не всё нужно решать прямо сейчас.',
+      'Удивительно, как музыка может изменить настроение за секунды. Что ещё обладает такой силой?',
+      'Мы все актёры в театре жизни. Но кто написал сценарий?'
+    ];
 
     const ICONS = {
       cloud: `<svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h.71C7.37 7.69 9.48 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3s-1.34 3-3 3z"/></svg>`,
       bell: `<svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>`,
       back: `<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>`,
-      pin: `<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`
+      pin: `<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
+      check: `<svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`,
+      chevronDown: `<svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>`,
+      bookmark: `<svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>`,
+      bookmarkOutline: `<svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>`,
+      thought: `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`
     };
 
     // ============================================================
@@ -607,9 +1063,16 @@
     // ============================================================
     let state = {
       currentScreen: 'feed',
+      currentTab: 'all',
       radius: 500,
       thoughts: [],
-      lastPostAt: null
+      lastPostAt: null,
+      dropdownOpen: false,
+      expandedCards: new Set(),
+      savedThoughts: new Set(),
+      notifications: [],
+      unreadCount: 0,
+      notificationsOpen: false
     };
 
     // ============================================================
@@ -620,10 +1083,20 @@
         const thoughts = localStorage.getItem(STORAGE_KEYS.thoughts);
         const radius = localStorage.getItem(STORAGE_KEYS.radius);
         const lastPost = localStorage.getItem(STORAGE_KEYS.lastPost);
+        const expanded = localStorage.getItem(STORAGE_KEYS.expanded);
+        const saved = localStorage.getItem(STORAGE_KEYS.saved);
+        const notifications = localStorage.getItem(STORAGE_KEYS.notifications);
+        const notifRead = localStorage.getItem(STORAGE_KEYS.notifRead);
 
         state.thoughts = thoughts ? JSON.parse(thoughts) : [];
         state.radius = radius ? parseInt(radius, 10) : 500;
         state.lastPostAt = lastPost ? parseInt(lastPost, 10) : null;
+        state.expandedCards = expanded ? new Set(JSON.parse(expanded)) : new Set();
+        state.savedThoughts = saved ? new Set(JSON.parse(saved)) : new Set();
+        state.notifications = notifications ? JSON.parse(notifications) : [];
+        
+        const readCount = notifRead ? parseInt(notifRead, 10) : 0;
+        state.unreadCount = Math.max(0, state.notifications.length - readCount);
       } catch (e) {
         console.warn('Failed to load state:', e);
       }
@@ -643,6 +1116,23 @@
       }
     }
 
+    function saveExpanded() {
+      localStorage.setItem(STORAGE_KEYS.expanded, JSON.stringify([...state.expandedCards]));
+    }
+
+    function saveSaved() {
+      localStorage.setItem(STORAGE_KEYS.saved, JSON.stringify([...state.savedThoughts]));
+    }
+
+    function saveNotifications() {
+      localStorage.setItem(STORAGE_KEYS.notifications, JSON.stringify(state.notifications));
+    }
+
+    function markNotificationsRead() {
+      localStorage.setItem(STORAGE_KEYS.notifRead, state.notifications.length.toString());
+      state.unreadCount = 0;
+    }
+
     // ============================================================
     // SEED DATA
     // ============================================================
@@ -653,13 +1143,13 @@
       state.thoughts = [
         {
           id: generateId(),
-          text: 'Иногда так хочется просто исчезнуть на время, чтобы никто не искал...',
+          text: 'Иногда так хочется просто исчезнуть на время, чтобы никто не искал. Уехать куда-нибудь далеко, где тебя никто не знает, и просто побыть наедине с собой. Не отвечать на звонки, не проверять сообщения. Просто быть. Смотреть на закат, слушать тишину, думать о чем-то своем. Может это и есть настоящий отдых - не от работы, а от ожиданий окружающих.',
           created_at: now - 5 * 60 * 1000,
           distance_m: 200
         },
         {
           id: generateId(),
-          text: 'Почему разговоры с незнакомцами в транспорте бывают такими искренними!',
+          text: 'Почему разговоры с незнакомцами в транспорте бывают такими искренними! Сегодня ехала в автобусе и разговорилась с пожилой женщиной. За 20 минут она рассказала мне больше мудрых вещей, чем я слышала за последний год. Может потому что мы знаем, что больше никогда не встретимся, и можем быть настоящими.',
           created_at: now - 15 * 60 * 1000,
           distance_m: 450
         },
@@ -722,9 +1212,8 @@
     }
 
     function formatRadiusText(m) {
-      if (m < 1000) return `${m} метров`;
-      const km = m / 1000;
-      return `${km} ${pluralize(km, ['километр', 'километра', 'километров'])}`;
+      const r = RADIUSES.find(r => r.value === m);
+      return r ? r.labelFull : `${m} метров`;
     }
 
     function getTimeUntilNextPost() {
@@ -746,6 +1235,276 @@
       return Math.floor(Math.random() * 115000) + 5000;
     }
 
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ============================================================
+    // TOAST NOTIFICATIONS
+    // ============================================================
+    function showToast(title, text, onClick) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `
+        <div class="toast-icon">${ICONS.thought}</div>
+        <div class="toast-content">
+          <div class="toast-title">${escapeHtml(title)}</div>
+          <div class="toast-text">${escapeHtml(text)}</div>
+        </div>
+      `;
+      
+      if (onClick) {
+        toast.addEventListener('click', () => {
+          onClick();
+          hideToast(toast);
+        });
+      }
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 50);
+      
+      setTimeout(() => hideToast(toast), 5000);
+    }
+
+    function hideToast(toast) {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }
+
+    // ============================================================
+    // NOTIFICATION SYSTEM
+    // ============================================================
+    function addNotification(thought) {
+      const notification = {
+        id: generateId(),
+        thoughtId: thought.id,
+        text: thought.text,
+        distance_m: thought.distance_m,
+        created_at: Date.now()
+      };
+      
+      state.notifications.unshift(notification);
+      state.unreadCount++;
+      saveNotifications();
+      
+      SoundEngine.play('notification');
+      showToast('Новая мысль рядом', thought.text.substring(0, 50) + '...', () => {
+        if (state.currentScreen !== 'feed') {
+          navigateTo('feed', null);
+        }
+        state.currentTab = 'all';
+        renderTabs();
+        renderFeed();
+      });
+      
+      renderNotificationBadge();
+    }
+
+    function toggleNotifications() {
+      if (state.notificationsOpen) {
+        closeNotifications();
+      } else {
+        openNotifications();
+      }
+    }
+
+    function openNotifications() {
+      state.notificationsOpen = true;
+      SoundEngine.play('open');
+      document.getElementById('notifications-panel').classList.add('open');
+      renderNotificationsList();
+      markNotificationsRead();
+      renderNotificationBadge();
+    }
+
+    function closeNotifications() {
+      state.notificationsOpen = false;
+      SoundEngine.play('close');
+      document.getElementById('notifications-panel').classList.remove('open');
+    }
+
+    function clearNotifications() {
+      SoundEngine.play('tap');
+      state.notifications = [];
+      state.unreadCount = 0;
+      saveNotifications();
+      markNotificationsRead();
+      renderNotificationsList();
+      renderNotificationBadge();
+    }
+
+    function renderNotificationBadge() {
+      // Badge is rendered dynamically in header
+      renderHeader();
+    }
+
+    function renderNotificationsList() {
+      const container = document.getElementById('notifications-list');
+      
+      if (state.notifications.length === 0) {
+        container.innerHTML = '<div class="notifications-empty">Нет уведомлений</div>';
+        return;
+      }
+      
+      container.innerHTML = state.notifications.slice(0, 20).map(n => `
+        <div class="notification-item" data-thought-id="${n.thoughtId}">
+          <div class="notification-item-text">${escapeHtml(n.text)}</div>
+          <div class="notification-item-meta">${formatDistanceRu(n.distance_m)} - ${timeAgoRu(n.created_at)}</div>
+        </div>
+      `).join('');
+      
+      container.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', () => {
+          SoundEngine.play('tap');
+          closeNotifications();
+          state.currentTab = 'all';
+          renderTabs();
+          renderFeed();
+        });
+      });
+    }
+
+    // ============================================================
+    // SIMULATE NEW THOUGHTS
+    // ============================================================
+    function simulateNewThought() {
+      const text = RANDOM_THOUGHTS[Math.floor(Math.random() * RANDOM_THOUGHTS.length)];
+      const distance = generateRandomDistance();
+      
+      // Only notify if within current radius
+      if (distance <= state.radius) {
+        const thought = {
+          id: generateId(),
+          text: text,
+          created_at: Date.now(),
+          distance_m: distance
+        };
+        
+        state.thoughts.unshift(thought);
+        saveThoughts();
+        
+        addNotification(thought);
+        
+        if (state.currentScreen === 'feed' && state.currentTab === 'all') {
+          renderFeed();
+        }
+      }
+    }
+
+    function startSimulation() {
+      // Simulate new thought every 30-90 seconds
+      function scheduleNext() {
+        const delay = 30000 + Math.random() * 60000;
+        setTimeout(() => {
+          simulateNewThought();
+          scheduleNext();
+        }, delay);
+      }
+      scheduleNext();
+    }
+
+    // ============================================================
+    // DROPDOWN FUNCTIONS
+    // ============================================================
+    function toggleDropdown() {
+      if (state.dropdownOpen) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+    }
+
+    function openDropdown() {
+      state.dropdownOpen = true;
+      SoundEngine.play('open');
+      
+      const panel = document.getElementById('radius-panel');
+      const dropdown = document.getElementById('radius-dropdown');
+      const overlay = document.getElementById('radius-overlay');
+      
+      panel.classList.add('open');
+      dropdown.classList.add('open');
+      overlay.classList.add('open');
+    }
+
+    function closeDropdown() {
+      state.dropdownOpen = false;
+      SoundEngine.play('close');
+      
+      const panel = document.getElementById('radius-panel');
+      const dropdown = document.getElementById('radius-dropdown');
+      const overlay = document.getElementById('radius-overlay');
+      
+      panel.classList.remove('open');
+      dropdown.classList.remove('open');
+      overlay.classList.remove('open');
+    }
+
+    function selectRadius(value) {
+      state.radius = value;
+      saveRadius();
+      SoundEngine.play('select');
+      
+      renderRadiusPanel();
+      renderRadiusDropdown();
+      renderFeed();
+      
+      setTimeout(() => closeDropdown(), 150);
+    }
+
+    // ============================================================
+    // CARD EXPAND/COLLAPSE
+    // ============================================================
+    function toggleCard(id) {
+      if (state.expandedCards.has(id)) {
+        state.expandedCards.delete(id);
+        SoundEngine.play('collapse');
+      } else {
+        state.expandedCards.add(id);
+        SoundEngine.play('expand');
+      }
+      saveExpanded();
+      renderFeed();
+    }
+
+    // ============================================================
+    // SAVE/UNSAVE THOUGHTS
+    // ============================================================
+    function toggleSave(id, event) {
+      event.stopPropagation();
+      
+      if (state.savedThoughts.has(id)) {
+        state.savedThoughts.delete(id);
+        SoundEngine.play('unsave');
+      } else {
+        state.savedThoughts.add(id);
+        SoundEngine.play('save');
+      }
+      saveSaved();
+      renderFeed();
+    }
+
+    // ============================================================
+    // TABS
+    // ============================================================
+    function switchTab(tab) {
+      if (state.currentTab === tab) return;
+      
+      state.currentTab = tab;
+      SoundEngine.play('select');
+      renderTabs();
+      renderFeed();
+    }
+
+    function renderTabs() {
+      document.getElementById('tab-all').className = `tab-btn ${state.currentTab === 'all' ? 'active' : ''}`;
+      document.getElementById('tab-saved').className = `tab-btn ${state.currentTab === 'saved' ? 'active' : ''}`;
+    }
+
     // ============================================================
     // RENDER FUNCTIONS
     // ============================================================
@@ -753,13 +1512,24 @@
       const header = document.getElementById('header');
       
       if (state.currentScreen === 'feed') {
+        const badge = state.unreadCount > 0 
+          ? `<span class="notification-badge">${state.unreadCount > 9 ? '9+' : state.unreadCount}</span>` 
+          : '';
+        
         header.innerHTML = `
           <div class="header-content">
             <div class="header-icon">${ICONS.cloud}</div>
             <h1 class="header-title">Мысли вокруг</h1>
-            <div class="header-icon">${ICONS.bell}</div>
+            <div class="header-icon" id="btn-notifications">
+              ${ICONS.bell}
+              ${badge}
+            </div>
           </div>
         `;
+        
+        document.getElementById('btn-notifications').addEventListener('click', () => {
+          toggleNotifications();
+        });
       } else {
         header.innerHTML = `
           <div class="header-content">
@@ -772,23 +1542,20 @@
       }
     }
 
-    function renderRadiusTabs() {
-      const container = document.getElementById('radius-tabs');
+    function renderRadiusDropdown() {
+      const container = document.getElementById('radius-dropdown');
       container.innerHTML = RADIUSES.map(r => `
-        <div class="radius-tab ${r.value === state.radius ? 'active' : ''}" data-radius="${r.value}">
-          ${r.label}
+        <div class="radius-option ${r.value === state.radius ? 'active' : ''}" data-radius="${r.value}">
+          <span>${r.labelFull}</span>
+          ${ICONS.check}
         </div>
       `).join('');
 
-      container.querySelectorAll('.radius-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          SoundEngine.play('select');
-          const radius = parseInt(tab.dataset.radius, 10);
-          state.radius = radius;
-          saveRadius();
-          renderRadiusTabs();
-          renderRadiusPanel();
-          renderFeed();
+      container.querySelectorAll('.radius-option').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const radius = parseInt(opt.dataset.radius, 10);
+          selectRadius(radius);
         });
       });
     }
@@ -799,28 +1566,84 @@
 
     function renderFeed() {
       const container = document.getElementById('feed-list');
-      const filtered = state.thoughts
-        .filter(t => t.distance_m <= state.radius)
-        .sort((a, b) => b.created_at - a.created_at);
+      
+      let filtered;
+      if (state.currentTab === 'saved') {
+        filtered = state.thoughts
+          .filter(t => state.savedThoughts.has(t.id))
+          .sort((a, b) => b.created_at - a.created_at);
+      } else {
+        filtered = state.thoughts
+          .filter(t => t.distance_m <= state.radius)
+          .sort((a, b) => b.created_at - a.created_at);
+      }
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            Пока нет мыслей в этом радиусе.
-          </div>
-        `;
+        const emptyText = state.currentTab === 'saved' 
+          ? 'Нет сохранённых мыслей.' 
+          : 'Пока нет мыслей в этом радиусе.';
+        container.innerHTML = `<div class="empty-state">${emptyText}</div>`;
         return;
       }
 
-      container.innerHTML = filtered.map(t => `
-        <div class="thought-card">
-          <div class="thought-text">${escapeHtml(t.text)}</div>
-          <div class="thought-meta">
-            ${ICONS.pin}
-            <span>${formatDistanceRu(t.distance_m)} - ${timeAgoRu(t.created_at)}</span>
+      container.innerHTML = filtered.map(t => {
+        const isExpanded = state.expandedCards.has(t.id);
+        const isSaved = state.savedThoughts.has(t.id);
+        const needsTruncate = t.text.length > PREVIEW_CHARS;
+        const displayText = (!needsTruncate || isExpanded) 
+          ? escapeHtml(t.text) 
+          : escapeHtml(t.text.substring(0, PREVIEW_CHARS)) + '...';
+        
+        return `
+          <div class="thought-card ${isExpanded ? 'expanded' : ''}" data-id="${t.id}">
+            <div class="thought-text ${needsTruncate && !isExpanded ? 'collapsed' : ''}">${displayText}</div>
+            ${needsTruncate ? `
+              <div class="thought-expand-hint" data-id="${t.id}">
+                ${isExpanded ? 'Свернуть' : 'Читать дальше'}
+                ${ICONS.chevronDown}
+              </div>
+            ` : ''}
+            <div class="thought-footer">
+              <div class="thought-meta">
+                ${ICONS.pin}
+                <span>${formatDistanceRu(t.distance_m)} - ${timeAgoRu(t.created_at)}</span>
+              </div>
+              <div class="thought-actions">
+                <button class="thought-action-btn ${isSaved ? 'saved' : ''}" data-save-id="${t.id}">
+                  ${isSaved ? ICONS.bookmark : ICONS.bookmarkOutline}
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+
+      // Bind expand clicks
+      container.querySelectorAll('.thought-expand-hint').forEach(hint => {
+        hint.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleCard(hint.dataset.id);
+        });
+      });
+
+      // Bind text clicks for expand
+      container.querySelectorAll('.thought-text').forEach(text => {
+        text.addEventListener('click', () => {
+          const card = text.closest('.thought-card');
+          const id = card.dataset.id;
+          const thought = state.thoughts.find(t => t.id === id);
+          if (thought && thought.text.length > PREVIEW_CHARS) {
+            toggleCard(id);
+          } else {
+            SoundEngine.play('tap');
+          }
+        });
+      });
+
+      // Bind save clicks
+      container.querySelectorAll('.thought-action-btn[data-save-id]').forEach(btn => {
+        btn.addEventListener('click', (e) => toggleSave(btn.dataset.saveId, e));
+      });
     }
 
     function renderWrite() {
@@ -836,10 +1659,14 @@
       if (len >= MAX_CHARS) counter.classList.add('error');
 
       const wait = getTimeUntilNextPost();
-      let infoHtml = 'Можно написать 1 мысль в 24 часа.';
+      let infoHtml = 'Можно написать 1 мысль в час.';
       
       if (wait) {
-        infoHtml += `<div class="wait-time">Можно через ${wait.hours} ч ${wait.minutes} мин</div>`;
+        if (wait.hours > 0) {
+          infoHtml += `<div class="wait-time">Можно через ${wait.hours} ч ${wait.minutes} мин</div>`;
+        } else {
+          infoHtml += `<div class="wait-time">Можно через ${wait.minutes} мин</div>`;
+        }
       }
       
       if (len > 0 && len < MIN_CHARS) {
@@ -852,18 +1679,25 @@
       btn.disabled = !canPublish;
     }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
     // ============================================================
     // NAVIGATION
     // ============================================================
     function navigateTo(screen, soundType = 'navigate') {
       if (soundType) {
         SoundEngine.play(soundType);
+      }
+      
+      // Close dropdowns
+      if (state.dropdownOpen) {
+        state.dropdownOpen = false;
+        document.getElementById('radius-panel').classList.remove('open');
+        document.getElementById('radius-dropdown').classList.remove('open');
+        document.getElementById('radius-overlay').classList.remove('open');
+      }
+      
+      if (state.notificationsOpen) {
+        state.notificationsOpen = false;
+        document.getElementById('notifications-panel').classList.remove('open');
       }
       
       state.currentScreen = screen;
@@ -896,35 +1730,29 @@
       
       document.getElementById('btn-publish').addEventListener('click', publish);
 
-      document.getElementById('radius-panel').addEventListener('click', () => {
-        SoundEngine.play('tap');
-        const tabs = document.getElementById('radius-tabs');
-        tabs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById('radius-panel').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown();
       });
 
-      // Global click sound for buttons and interactive elements
+      document.getElementById('radius-overlay').addEventListener('click', () => {
+        if (state.dropdownOpen) closeDropdown();
+      });
+
+      document.getElementById('notifications-clear').addEventListener('click', clearNotifications);
+
+      // Tabs
+      document.getElementById('tab-all').addEventListener('click', () => switchTab('all'));
+      document.getElementById('tab-saved').addEventListener('click', () => switchTab('saved'));
+
+      // Close notifications when clicking outside
       document.addEventListener('click', (e) => {
-        const target = e.target;
-        
-        // Skip if already handled by specific handlers
-        if (target.id === 'btn-write' || 
-            target.id === 'btn-cancel' || 
-            target.id === 'btn-publish' ||
-            target.id === 'radius-panel' ||
-            target.closest('#radius-panel') ||
-            target.closest('.radius-tab') ||
-            target.closest('#btn-back')) {
-          return;
-        }
-
-        // Header icons
-        if (target.closest('.header-icon')) {
-          SoundEngine.play('tap');
-        }
-
-        // Thought cards
-        if (target.closest('.thought-card')) {
-          SoundEngine.play('tap');
+        if (state.notificationsOpen) {
+          const panel = document.getElementById('notifications-panel');
+          const btn = document.getElementById('btn-notifications');
+          if (!panel.contains(e.target) && !btn.contains(e.target)) {
+            closeNotifications();
+          }
         }
       });
     }
@@ -993,7 +1821,7 @@
     }
 
     // ============================================================
-    // PWA SERVICE WORKER (INLINE)
+    // PWA SERVICE WORKER
     // ============================================================
     function registerSW() {
       if (!('serviceWorker' in navigator)) return;
@@ -1027,9 +1855,7 @@
         const blob = new Blob([swCode], { type: 'application/javascript' });
         const swUrl = URL.createObjectURL(blob);
         navigator.serviceWorker.register(swUrl).catch(() => {});
-      } catch (e) {
-        // Silent fail
-      }
+      } catch (e) {}
     }
 
     // ============================================================
@@ -1040,17 +1866,17 @@
       loadState();
       seedIfEmpty();
       renderHeader();
-      renderRadiusTabs();
+      renderRadiusDropdown();
       renderRadiusPanel();
+      renderTabs();
       renderFeed();
       bindEvents();
       registerSW();
+      startSimulation();
       
-      // Resume audio context on first user interaction
       document.addEventListener('touchstart', () => SoundEngine.resume(), { once: true });
       document.addEventListener('click', () => SoundEngine.resume(), { once: true });
 
-      // Update time display periodically
       setInterval(() => {
         if (state.currentScreen === 'feed') renderFeed();
         if (state.currentScreen === 'write') renderWrite();
@@ -1060,4 +1886,4 @@
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
-</html>
+</html> 
