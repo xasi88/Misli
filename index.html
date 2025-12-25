@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#2a7fff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Мысли вокруг">
+  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22%D0%9C%D1%8B%D1%81%D0%BB%D0%B8%20%D0%B2%D0%BE%D0%BA%D1%80%D1%83%D0%B3%22%2C%22short_name%22%3A%22%D0%9C%D1%8B%D1%81%D0%BB%D0%B8%22%2C%22description%22%3A%22%D0%90%D0%BD%D0%BE%D0%BD%D0%B8%D0%BC%D0%BD%D1%8B%D0%B5%20%D0%BC%D1%8B%D1%81%D0%BB%D0%B8%20%D0%B2%D0%BE%D0%BA%D1%80%D1%83%D0%B3%20%D0%B2%D0%B0%D1%81%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f2f4f8%22%2C%22theme_color%22%3A%22%232a7fff%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%253E%253Cdefs%253E%253ClinearGradient%20id%3D%27g%27%20x1%3D%270%2525%27%20y1%3D%270%2525%27%20x2%3D%27100%2525%27%20y2%3D%27100%2525%27%253E%253Cstop%20offset%3D%270%2525%27%20stop-color%3D%27%25232a7fff%27%2F%253E%253Cstop%20offset%3D%27100%2525%27%20stop-color%3D%27%252366a3ff%27%2F%253E%253C%2FlinearGradient%253E%253C%2Fdefs%253E%253Crect%20fill%3D%27url%2528%2523g%2529%27%20width%3D%27192%27%20height%3D%27192%27%20rx%3D%2740%27%2F%253E%253Cpath%20fill%3D%27white%27%20d%3D%27M96%2036c-26.5%200-48%2018.5-48%2041.3c0%2013.5%207.5%2025.5%2019.2%2033.2l-3.2%2019.5l20-12c4%201%208%201.5%2012%201.5c26.5%200%2048-18.5%2048-41.3S122.5%2036%2096%2036z%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+  <title>Мысли вокруг</title>
+  <style>
+    :root {
+      --bg: #f2f4f8;
+      --card: #ffffff;
+      --text: #1f2a37;
+      --muted: #6b7280;
+      --blue1: #2a7fff;
+      --blue2: #66a3ff;
+      --shadow1: 0 8px 20px rgba(16,24,40,0.10);
+      --shadow2: 0 2px 8px rgba(16,24,40,0.10);
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .phone-container {
+      width: 100%;
+      max-width: 420px;
+      height: calc(100vh - 24px);
+      height: calc(100dvh - 24px);
+      max-height: 850px;
+      background: var(--bg);
+      border-radius: 32px;
+      box-shadow: var(--shadow1);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--blue1) 0%, var(--blue2) 100%);
+      padding: 16px 20px 32px;
+      position: relative;
+      flex-shrink: 0;
+      border-radius: 32px 32px 0 0;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100' preserveAspectRatio='none'%3E%3Cpath fill='%23f2f4f8' d='M0,0 C480,100 960,100 1440,0 L1440,100 L0,100 Z'/%3E%3C/svg%3E") no-repeat bottom;
+      background-size: 100% 100%;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.15s;
+    }
+
+    .header-icon:active {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .header-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .header-title {
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .header-spacer {
+      width: 40px;
+    }
+
+    .content {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Feed Screen */
+    .radius-panel {
+      background: var(--card);
+      margin: 12px 16px 0;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow2);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .radius-panel:active {
+      transform: scale(0.98);
+    }
+
+    .radius-panel svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--blue1);
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .radius-panel-text {
+      flex: 1;
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .radius-panel .chevron {
+      width: 20px;
+      height: 20px;
+      fill: var(--muted);
+    }
+
+    .radius-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .radius-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .radius-tab {
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .radius-tab:active {
+      opacity: 0.7;
+    }
+
+    .radius-tab.active {
+      color: var(--blue1);
+      border-bottom-color: var(--blue1);
+      font-weight: 600;
+    }
+
+    .feed-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 16px 100px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .thought-card {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .thought-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .thought-meta {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .thought-meta svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--muted);
+      margin-right: 6px;
+    }
+
+    .empty-state {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow2);
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to top, var(--bg) 70%, transparent);
+    }
+
+    .btn-primary {
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, var(--blue1) 0%, var(--blue2) 100%);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(42,127,255,0.35);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(42,127,255,0.35);
+    }
+
+    .btn-primary:disabled {
+      background: #c4c9d4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Write Screen */
+    .write-content {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .textarea-container {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow2);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: 400px;
+    }
+
+    .thought-textarea {
+      flex: 1;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 16px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      font-family: inherit;
+      background: transparent;
+      border-radius: var(--radius-md);
+    }
+
+    .thought-textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .char-counter {
+      padding: 8px 16px 12px;
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .char-counter.warning {
+      color: #f59e0b;
+    }
+
+    .char-counter.error {
+      color: #ef4444;
+    }
+
+    .write-info {
+      text-align: center;
+      padding: 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .write-info .wait-time {
+      color: var(--blue1);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .write-info .min-chars {
+      color: #f59e0b;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .write-buttons {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .btn-secondary {
+      flex: 1;
+      height: 52px;
+      background: var(--card);
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.1s;
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.97);
+      background: #f9fafb;
+    }
+
+    .write-buttons .btn-primary {
+      flex: 1;
+    }
+
+    @media (max-width: 440px) {
+      body {
+        padding: 0;
+      }
+      .phone-container {
+        max-width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        max-height: none;
+        border-radius: 0;
+      }
+      .header {
+        border-radius: 0;
+        padding-top: calc(16px + env(safe-area-inset-top, 0px));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <header class="header" id="header">
+      <!-- Dynamic header content -->
+    </header>
+    
+    <main class="content">
+      <!-- Feed Screen -->
+      <section class="screen active" id="screen-feed">
+        <div class="radius-panel" id="radius-panel">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <span class="radius-panel-text" id="radius-text">Радиус: 500 метров</span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+        
+        <div class="radius-tabs" id="radius-tabs">
+          <!-- Dynamic tabs -->
+        </div>
+        
+        <div class="feed-list" id="feed-list">
+          <!-- Dynamic cards -->
+        </div>
+        
+        <div class="bottom-bar">
+          <button class="btn-primary" id="btn-write">Написать мысль</button>
+        </div>
+      </section>
+      
+      <!-- Write Screen -->
+      <section class="screen" id="screen-write">
+        <div class="write-content">
+          <div class="textarea-container">
+            <textarea class="thought-textarea" id="thought-input" placeholder="Введите вашу мысль..." maxlength="10000"></textarea>
+            <div class="char-counter" id="char-counter">0 / 10000 знаков</div>
+          </div>
+          <div class="write-info" id="write-info">
+            Можно написать 1 мысль в 24 часа.
+          </div>
+        </div>
+        <div class="write-buttons">
+          <button class="btn-secondary" id="btn-cancel">Отмена</button>
+          <button class="btn-primary" id="btn-publish" disabled>Опубликовать</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ============================================================
+    // SOUND SYSTEM (Web Audio API)
+    // ============================================================
+    const SoundEngine = {
+      ctx: null,
+      enabled: true,
+
+      init() {
+        try {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          this.enabled = false;
+        }
+      },
+
+      resume() {
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+
+      play(type) {
+        if (!this.enabled || !this.ctx) return;
+        this.resume();
+
+        switch (type) {
+          case 'tap':
+            this.playTap();
+            break;
+          case 'success':
+            this.playSuccess();
+            break;
+          case 'navigate':
+            this.playNavigate();
+            break;
+          case 'back':
+            this.playBack();
+            break;
+          case 'error':
+            this.playError();
+            break;
+          case 'select':
+            this.playSelect();
+            break;
+          case 'type':
+            this.playType();
+            break;
+        }
+      },
+
+      createOscillator(freq, type = 'sine', duration = 0.1, volume = 0.3) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        
+        gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.start(this.ctx.currentTime);
+        osc.stop(this.ctx.currentTime + duration);
+      },
+
+      playTap() {
+        this.createOscillator(800, 'sine', 0.05, 0.15);
+      },
+
+      playSuccess() {
+        const now = this.ctx.currentTime;
+        
+        // Ascending arpeggio
+        [523, 659, 784].forEach((freq, i) => {
+          setTimeout(() => {
+            this.createOscillator(freq, 'sine', 0.15, 0.2);
+          }, i * 80);
+        });
+      },
+
+      playNavigate() {
+        this.createOscillator(600, 'sine', 0.08, 0.12);
+        setTimeout(() => {
+          this.createOscillator(900, 'sine', 0.1, 0.15);
+        }, 50);
+      },
+
+      playBack() {
+        this.createOscillator(700, 'sine', 0.08, 0.12);
+        setTimeout(() => {
+          this.createOscillator(500, 'sine', 0.1, 0.1);
+        }, 50);
+      },
+
+      playError() {
+        this.createOscillator(200, 'square', 0.15, 0.1);
+      },
+
+      playSelect() {
+        this.createOscillator(1000, 'sine', 0.04, 0.1);
+      },
+
+      playType() {
+        const freq = 400 + Math.random() * 200;
+        this.createOscillator(freq, 'sine', 0.02, 0.05);
+      }
+    };
+
+    // ============================================================
+    // CONSTANTS
+    // ============================================================
+    const STORAGE_KEYS = {
+      thoughts: 'mv_thoughts_v1',
+      radius: 'mv_radius_v1',
+      lastPost: 'mv_last_post_at_v1'
+    };
+
+    const RADIUSES = [
+      { value: 100, label: '100 м' },
+      { value: 500, label: '500 м' },
+      { value: 1000, label: '1 км' },
+      { value: 5000, label: '5 км' },
+      { value: 10000, label: '10 км' },
+      { value: 50000, label: '50 км' },
+      { value: 100000, label: '100 км' }
+    ];
+
+    const MIN_CHARS = 100;
+    const MAX_CHARS = 10000;
+    const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+
+    const ICONS = {
+      cloud: `<svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h.71C7.37 7.69 9.48 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3s-1.34 3-3 3z"/></svg>`,
+      bell: `<svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>`,
+      back: `<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>`,
+      pin: `<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let state = {
+      currentScreen: 'feed',
+      radius: 500,
+      thoughts: [],
+      lastPostAt: null
+    };
+
+    // ============================================================
+    // STORAGE FUNCTIONS
+    // ============================================================
+    function loadState() {
+      try {
+        const thoughts = localStorage.getItem(STORAGE_KEYS.thoughts);
+        const radius = localStorage.getItem(STORAGE_KEYS.radius);
+        const lastPost = localStorage.getItem(STORAGE_KEYS.lastPost);
+
+        state.thoughts = thoughts ? JSON.parse(thoughts) : [];
+        state.radius = radius ? parseInt(radius, 10) : 500;
+        state.lastPostAt = lastPost ? parseInt(lastPost, 10) : null;
+      } catch (e) {
+        console.warn('Failed to load state:', e);
+      }
+    }
+
+    function saveThoughts() {
+      localStorage.setItem(STORAGE_KEYS.thoughts, JSON.stringify(state.thoughts));
+    }
+
+    function saveRadius() {
+      localStorage.setItem(STORAGE_KEYS.radius, state.radius.toString());
+    }
+
+    function saveLastPost() {
+      if (state.lastPostAt) {
+        localStorage.setItem(STORAGE_KEYS.lastPost, state.lastPostAt.toString());
+      }
+    }
+
+    // ============================================================
+    // SEED DATA
+    // ============================================================
+    function seedIfEmpty() {
+      if (state.thoughts.length > 0) return;
+
+      const now = Date.now();
+      state.thoughts = [
+        {
+          id: generateId(),
+          text: 'Иногда так хочется просто исчезнуть на время, чтобы никто не искал...',
+          created_at: now - 5 * 60 * 1000,
+          distance_m: 200
+        },
+        {
+          id: generateId(),
+          text: 'Почему разговоры с незнакомцами в транспорте бывают такими искренними!',
+          created_at: now - 15 * 60 * 1000,
+          distance_m: 450
+        },
+        {
+          id: generateId(),
+          text: 'Кажется, я стою на перепутье, и не знаю, куда двигаться дальше...',
+          created_at: now - 30 * 60 * 1000,
+          distance_m: 600
+        }
+      ];
+      saveThoughts();
+    }
+
+    // ============================================================
+    // UTILS
+    // ============================================================
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    }
+
+    function pluralize(n, forms) {
+      const n10 = n % 10;
+      const n100 = n % 100;
+      if (n10 === 1 && n100 !== 11) return forms[0];
+      if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return forms[1];
+      return forms[2];
+    }
+
+    function timeAgoRu(ms) {
+      const now = Date.now();
+      const diff = now - ms;
+      const seconds = Math.floor(diff / 1000);
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+
+      if (seconds < 45) return 'только что';
+      if (minutes < 60) {
+        return `${minutes} ${pluralize(minutes, ['минуту', 'минуты', 'минут'])} назад`;
+      }
+      if (hours < 24) {
+        return `${hours} ${pluralize(hours, ['час', 'часа', 'часов'])} назад`;
+      }
+      if (days < 7) {
+        return `${days} ${pluralize(days, ['день', 'дня', 'дней'])} назад`;
+      }
+
+      const date = new Date(ms);
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function formatDistanceRu(m) {
+      if (m < 1000) return `${Math.round(m)} м`;
+      const km = m / 1000;
+      if (km < 10) return `${km.toFixed(1).replace('.', ',')} км`;
+      return `${Math.round(km)} км`;
+    }
+
+    function formatRadiusText(m) {
+      if (m < 1000) return `${m} метров`;
+      const km = m / 1000;
+      return `${km} ${pluralize(km, ['километр', 'километра', 'километров'])}`;
+    }
+
+    function getTimeUntilNextPost() {
+      if (!state.lastPostAt) return null;
+      const elapsed = Date.now() - state.lastPostAt;
+      const remaining = COOLDOWN_MS - elapsed;
+      if (remaining <= 0) return null;
+
+      const hours = Math.floor(remaining / 3600000);
+      const minutes = Math.floor((remaining % 3600000) / 60000);
+      return { hours, minutes };
+    }
+
+    function generateRandomDistance() {
+      const rand = Math.random();
+      if (rand < 0.5) return Math.floor(Math.random() * 500) + 50;
+      if (rand < 0.8) return Math.floor(Math.random() * 2000) + 500;
+      if (rand < 0.95) return Math.floor(Math.random() * 5000) + 2500;
+      return Math.floor(Math.random() * 115000) + 5000;
+    }
+
+    // ============================================================
+    // RENDER FUNCTIONS
+    // ============================================================
+    function renderHeader() {
+      const header = document.getElementById('header');
+      
+      if (state.currentScreen === 'feed') {
+        header.innerHTML = `
+          <div class="header-content">
+            <div class="header-icon">${ICONS.cloud}</div>
+            <h1 class="header-title">Мысли вокруг</h1>
+            <div class="header-icon">${ICONS.bell}</div>
+          </div>
+        `;
+      } else {
+        header.innerHTML = `
+          <div class="header-content">
+            <div class="header-icon" id="btn-back">${ICONS.back}</div>
+            <h1 class="header-title">Написать мысль</h1>
+            <div class="header-spacer"></div>
+          </div>
+        `;
+        document.getElementById('btn-back').addEventListener('click', () => navigateTo('feed', 'back'));
+      }
+    }
+
+    function renderRadiusTabs() {
+      const container = document.getElementById('radius-tabs');
+      container.innerHTML = RADIUSES.map(r => `
+        <div class="radius-tab ${r.value === state.radius ? 'active' : ''}" data-radius="${r.value}">
+          ${r.label}
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.radius-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          SoundEngine.play('select');
+          const radius = parseInt(tab.dataset.radius, 10);
+          state.radius = radius;
+          saveRadius();
+          renderRadiusTabs();
+          renderRadiusPanel();
+          renderFeed();
+        });
+      });
+    }
+
+    function renderRadiusPanel() {
+      document.getElementById('radius-text').textContent = `Радиус: ${formatRadiusText(state.radius)}`;
+    }
+
+    function renderFeed() {
+      const container = document.getElementById('feed-list');
+      const filtered = state.thoughts
+        .filter(t => t.distance_m <= state.radius)
+        .sort((a, b) => b.created_at - a.created_at);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            Пока нет мыслей в этом радиусе.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(t => `
+        <div class="thought-card">
+          <div class="thought-text">${escapeHtml(t.text)}</div>
+          <div class="thought-meta">
+            ${ICONS.pin}
+            <span>${formatDistanceRu(t.distance_m)} - ${timeAgoRu(t.created_at)}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderWrite() {
+      const input = document.getElementById('thought-input');
+      const counter = document.getElementById('char-counter');
+      const info = document.getElementById('write-info');
+      const btn = document.getElementById('btn-publish');
+
+      const len = input.value.length;
+      counter.textContent = `${len} / ${MAX_CHARS} знаков`;
+      counter.className = 'char-counter';
+      if (len > 0 && len < MIN_CHARS) counter.classList.add('warning');
+      if (len >= MAX_CHARS) counter.classList.add('error');
+
+      const wait = getTimeUntilNextPost();
+      let infoHtml = 'Можно написать 1 мысль в 24 часа.';
+      
+      if (wait) {
+        infoHtml += `<div class="wait-time">Можно через ${wait.hours} ч ${wait.minutes} мин</div>`;
+      }
+      
+      if (len > 0 && len < MIN_CHARS) {
+        infoHtml += `<div class="min-chars">Минимум ${MIN_CHARS} знаков.</div>`;
+      }
+
+      info.innerHTML = infoHtml;
+
+      const canPublish = len >= MIN_CHARS && len <= MAX_CHARS && !wait;
+      btn.disabled = !canPublish;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ============================================================
+    // NAVIGATION
+    // ============================================================
+    function navigateTo(screen, soundType = 'navigate') {
+      if (soundType) {
+        SoundEngine.play(soundType);
+      }
+      
+      state.currentScreen = screen;
+      
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`screen-${screen}`).classList.add('active');
+      
+      renderHeader();
+
+      if (screen === 'feed') {
+        renderFeed();
+      } else if (screen === 'write') {
+        document.getElementById('thought-input').value = '';
+        renderWrite();
+        setTimeout(() => document.getElementById('thought-input').focus(), 100);
+      }
+    }
+
+    // ============================================================
+    // EVENT BINDINGS
+    // ============================================================
+    function bindEvents() {
+      document.getElementById('btn-write').addEventListener('click', () => navigateTo('write', 'navigate'));
+      document.getElementById('btn-cancel').addEventListener('click', () => navigateTo('feed', 'back'));
+      
+      document.getElementById('thought-input').addEventListener('input', () => {
+        SoundEngine.play('type');
+        renderWrite();
+      });
+      
+      document.getElementById('btn-publish').addEventListener('click', publish);
+
+      document.getElementById('radius-panel').addEventListener('click', () => {
+        SoundEngine.play('tap');
+        const tabs = document.getElementById('radius-tabs');
+        tabs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+
+      // Global click sound for buttons and interactive elements
+      document.addEventListener('click', (e) => {
+        const target = e.target;
+        
+        // Skip if already handled by specific handlers
+        if (target.id === 'btn-write' || 
+            target.id === 'btn-cancel' || 
+            target.id === 'btn-publish' ||
+            target.id === 'radius-panel' ||
+            target.closest('#radius-panel') ||
+            target.closest('.radius-tab') ||
+            target.closest('#btn-back')) {
+          return;
+        }
+
+        // Header icons
+        if (target.closest('.header-icon')) {
+          SoundEngine.play('tap');
+        }
+
+        // Thought cards
+        if (target.closest('.thought-card')) {
+          SoundEngine.play('tap');
+        }
+      });
+    }
+
+    // ============================================================
+    // PUBLISH
+    // ============================================================
+    function publish() {
+      const input = document.getElementById('thought-input');
+      const text = input.value.trim();
+
+      if (text.length < MIN_CHARS || text.length > MAX_CHARS) {
+        SoundEngine.play('error');
+        return;
+      }
+      if (getTimeUntilNextPost()) {
+        SoundEngine.play('error');
+        return;
+      }
+
+      const thought = {
+        id: generateId(),
+        text: text,
+        created_at: Date.now(),
+        distance_m: 0
+      };
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            thought.distance_m = generateRandomDistance();
+            finishPublish(thought);
+          },
+          () => {
+            thought.distance_m = Math.floor(Math.random() * 120000) + 50;
+            finishPublish(thought);
+          },
+          { timeout: 3000 }
+        );
+      } else {
+        thought.distance_m = Math.floor(Math.random() * 120000) + 50;
+        finishPublish(thought);
+      }
+    }
+
+    function finishPublish(thought) {
+      state.thoughts.unshift(thought);
+      state.lastPostAt = Date.now();
+      saveThoughts();
+      saveLastPost();
+      SoundEngine.play('success');
+      navigateTo('feed', null);
+    }
+
+    // ============================================================
+    // BACKEND STUBS (TODO)
+    // ============================================================
+    async function apiFetchThoughts(radius) {
+      /* TODO: backend */
+      return state.thoughts.filter(t => t.distance_m <= radius);
+    }
+
+    async function apiPublishThought(thought) {
+      /* TODO: backend */
+      return thought;
+    }
+
+    // ============================================================
+    // PWA SERVICE WORKER (INLINE)
+    // ============================================================
+    function registerSW() {
+      if (!('serviceWorker' in navigator)) return;
+
+      const swCode = `
+        const CACHE_NAME = 'mv-cache-v1';
+        const urlsToCache = ['./'];
+
+        self.addEventListener('install', event => {
+          event.waitUntil(
+            caches.open(CACHE_NAME)
+              .then(cache => cache.addAll(urlsToCache))
+              .then(() => self.skipWaiting())
+          );
+        });
+
+        self.addEventListener('activate', event => {
+          event.waitUntil(self.clients.claim());
+        });
+
+        self.addEventListener('fetch', event => {
+          event.respondWith(
+            caches.match(event.request)
+              .then(response => response || fetch(event.request))
+              .catch(() => caches.match('./'))
+          );
+        });
+      `;
+
+      try {
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      } catch (e) {
+        // Silent fail
+      }
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    function init() {
+      SoundEngine.init();
+      loadState();
+      seedIfEmpty();
+      renderHeader();
+      renderRadiusTabs();
+      renderRadiusPanel();
+      renderFeed();
+      bindEvents();
+      registerSW();
+      
+      // Resume audio context on first user interaction
+      document.addEventListener('touchstart', () => SoundEngine.resume(), { once: true });
+      document.addEventListener('click', () => SoundEngine.resume(), { once: true });
+
+      // Update time display periodically
+      setInterval(() => {
+        if (state.currentScreen === 'feed') renderFeed();
+        if (state.currentScreen === 'write') renderWrite();
+      }, 60000);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
